@@ -28,7 +28,7 @@ export default function DashboardHeader({ userName = 'User', role = 'Admin' }: D
 
           {/* User Menu */}
           <div className="flex items-center space-x-3 pl-6 border-l border-gray-200">
-            <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white">
+            <div className="w-10 h-10 bg-teal-600 rounded-full flex items-center justify-center text-white">
               <User size={20} />
             </div>
             <div>

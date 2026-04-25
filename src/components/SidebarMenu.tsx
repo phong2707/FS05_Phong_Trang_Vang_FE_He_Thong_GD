@@ -28,8 +28,8 @@ export default function SidebarMenu({ items, isCollapsed = false }: SidebarMenuP
             to={item.href}
             className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${
               isActive
-                ? 'bg-blue-600 text-white'
-                : 'text-gray-300 hover:bg-gray-800 hover:text-white'
+                ? 'bg-teal-600 text-white shadow-md'
+                : 'text-gray-400 hover:bg-slate-700 hover:text-white'
             }`}
           >
             <Icon size={20} />

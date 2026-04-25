@@ -15,7 +15,7 @@ export default function SidebarLayout({ children, sidebar }: SidebarLayoutProps)
       <div
         className={`${
           sidebarOpen ? 'w-64' : 'w-20'
-        } bg-gray-900 text-white transition-all duration-300 ease-in-out flex flex-col`}
+        } bg-gradient-to-b from-slate-900 to-slate-800 text-white transition-all duration-300 ease-in-out flex flex-col`}
       >
         <div className="p-4 flex items-center justify-between">
           {sidebarOpen && <h1 className="text-xl font-bold">Dashboard</h1>}

@@ -1,3 +1,9 @@
-import HomePage from '@/pages/HomePage.tsx';
-
-export default HomePage;
+export { default as DashboardHeader } from './DashboardHeader';
+export { default as StatCard } from './StatCard';
+export { default as SidebarMenu } from './SidebarMenu';
+export { AboutUsSection } from './AboutUsSection';
+export { CourseCard } from './CourseCard';
+export { FeaturedCourses } from './FeaturedCourses';
+export { Footer } from './Footer';
+export { Header } from './Header';
+export { HeroSection } from './HeroSection';

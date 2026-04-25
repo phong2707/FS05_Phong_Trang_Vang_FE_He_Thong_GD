@@ -116,6 +116,12 @@ export const Header: React.FC = () => {
 
           {/* Nút Đăng nhập và Đăng ký phải */}
           <div className="flex items-center gap-3">
+            <Link
+              to="/roles"
+              className="px-4 py-2 text-sm font-medium text-blue-600 hover:text-blue-700 transition-colors"
+            >
+              Vào Dashboard
+            </Link>
             <AuthDropdown
               isOpen={isLoginDropdownOpen}
               onMouseEnter={() => setIsLoginDropdownOpen(true)}

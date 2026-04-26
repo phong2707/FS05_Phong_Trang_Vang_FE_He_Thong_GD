@@ -171,7 +171,7 @@ export default function HomePage() {
           background: rgba(245,158,11,0.10);
         }
 
-        .stat-card {
+        .stat-card {  
           border-top: 3px solid var(--primary-mid);
           transition: all 0.2s ease;
         }

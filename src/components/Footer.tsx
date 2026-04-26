@@ -48,9 +48,9 @@ export const Footer: React.FC = () => {
             </h4>
             <ul className="space-y-2.5 text-sm">
               {[
-                { href: '/', label: 'Trang chu' },
-                { href: '/courses', label: 'Khoa hoc' },
-                { href: '/about', label: 'Gioi thieu' },
+                { href: '/', label: 'Trang chủ' },
+                { href: '/courses', label: 'Khoa học' },
+                { href: '/about', label: 'Giới thiệu' },
               ].map((item) => (
                 <li key={item.href}>
                   <a
@@ -72,9 +72,9 @@ export const Footer: React.FC = () => {
             </h4>
             <ul className="space-y-2.5 text-sm">
               {[
-                { href: '#', label: 'Lien he' },
-                { href: '#', label: 'Hoi dap (FAQ)' },
-                { href: '#', label: 'Dieu khoan dich vu' },
+                { href: '#', label: 'Liên hệ' },
+                { href: '#', label: 'ỏi đáp (FAQ)' },
+                { href: '#', label: 'Điều khoản dịch vụ' },
               ].map((item) => (
                 <li key={item.label}>
                   <a

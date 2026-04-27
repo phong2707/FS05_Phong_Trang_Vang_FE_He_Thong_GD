@@ -8,7 +8,7 @@ export default function TeacherCoursesPage() {
   const [loading, setLoading] = useState(true);
 
   // Tạm hardcode teacherId cho GĐ1
-  const teacherId = "35bc6afb-b53e-41ec-8602-f63f642712b9";
+  const teacherId = "a11c9ec7-2be1-4c96-af75-7aace7014ecb";
 
   useEffect(() => {
     getTeacherCourses(teacherId)

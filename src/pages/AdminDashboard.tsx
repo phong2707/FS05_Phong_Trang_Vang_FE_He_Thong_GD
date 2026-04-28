@@ -29,7 +29,7 @@ export default function AdminDashboard() {
     >
       <DashboardHeader userName="Admin User" role="Admin" />
 
-      <main className="flex-1 overflow-auto bg-gray-100 p-6">
+      <main className="flex-1 overflow-auto bg-stone-50 p-6">
         {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <StatCard
@@ -75,7 +75,7 @@ export default function AdminDashboard() {
                     <p className="text-sm font-medium text-gray-900">User Action {item}</p>
                     <p className="text-xs text-gray-500">2 hours ago</p>
                   </div>
-                  <span className="px-3 py-1 bg-blue-100 text-blue-600 text-xs rounded-full">New</span>
+                  <span className="px-3 py-1 bg-teal-100 text-teal-700 text-xs rounded-full font-medium">New</span>
                 </div>
               ))}
             </div>
@@ -85,26 +85,26 @@ export default function AdminDashboard() {
           <div className="bg-white rounded-lg shadow-md p-6">
             <h2 className="text-lg font-bold text-gray-900 mb-4">Quick Actions</h2>
             <div className="space-y-3">
-              <button className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition">
+              <button className="w-full bg-teal-600 text-white py-2 px-4 rounded-lg hover:bg-teal-700 transition font-medium">
                 Add User
               </button>
-              <button className="w-full bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition">
+              <button className="w-full bg-emerald-600 text-white py-2 px-4 rounded-lg hover:bg-emerald-700 transition font-medium">
                 Create Course
               </button>
-              <button className="w-full bg-purple-600 text-white py-2 px-4 rounded-lg hover:bg-purple-700 transition">
+              <button className="w-full bg-amber-600 text-white py-2 px-4 rounded-lg hover:bg-amber-700 transition font-medium">
                 Generate Report
               </button>
-              <button className="w-full border border-gray-300 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-50 transition">
+              <button className="w-full border border-stone-300 text-gray-700 py-2 px-4 rounded-lg hover:bg-stone-100 transition font-medium">
                 View Settings
               </button>
             </div>
 
             {/* Alert Box */}
-            <div className="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg flex items-start space-x-3">
-              <AlertCircle className="text-yellow-600 flex-shrink-0 mt-1" size={20} />
+            <div className="mt-6 p-4 bg-amber-50 border border-amber-200 rounded-lg flex items-start space-x-3">
+              <AlertCircle className="text-amber-600 flex-shrink-0 mt-1" size={20} />
               <div>
-                <p className="text-sm font-medium text-yellow-800">System Alert</p>
-                <p className="text-xs text-yellow-700 mt-1">
+                <p className="text-sm font-medium text-amber-800">System Alert</p>
+                <p className="text-xs text-amber-700 mt-1">
                   Scheduled maintenance on Sunday at 2:00 AM
                 </p>
               </div>

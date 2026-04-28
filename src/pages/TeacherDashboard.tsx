@@ -1,4 +1,4 @@
-import React from 'react';
+
 import {
   BookOpen,
   Users,
@@ -30,7 +30,7 @@ export default function TeacherDashboard() {
     >
       <DashboardHeader userName="Prof. John Smith" role="Teacher" />
 
-      <main className="flex-1 overflow-auto bg-gray-100 p-6">
+      <main className="flex-1 overflow-auto bg-stone-50 p-6">
         {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <StatCard
@@ -52,7 +52,7 @@ export default function TeacherDashboard() {
             value="12"
             icon={FileText}
             color="red"
-            badge={12}
+            
           />
           <StatCard
             title="Avg. Class Grade"
@@ -68,23 +68,26 @@ export default function TeacherDashboard() {
           <div className="lg:col-span-2 bg-white rounded-lg shadow-md p-6">
             <h2 className="text-lg font-bold text-gray-900 mb-4">My Courses</h2>
             <div className="space-y-4">
-              {['Advanced Python', 'Web Development', 'Data Science', 'JavaScript Basics', 'Database Design'].map((course, index) => (
-                <div key={index} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:shadow-md transition">
-                  <div className="flex items-center space-x-4">
-                    <div className={`w-12 h-12 bg-${['blue', 'green', 'purple', 'yellow', 'red'][index]}-100 rounded-lg flex items-center justify-center`}>
-                      <BookOpen className={`text-${['blue', 'green', 'purple', 'yellow', 'red'][index]}-600`} size={24} />
+              {['Advanced Python', 'Web Development', 'Data Science', 'JavaScript Basics', 'Database Design'].map((course, index) => {
+                const colors = ['teal', 'emerald', 'amber', 'teal', 'emerald'];
+                return (
+                  <div key={index} className="flex items-center justify-between p-4 border border-stone-200 rounded-lg hover:shadow-md transition bg-white">
+                    <div className="flex items-center space-x-4">
+                      <div className={`w-12 h-12 bg-${colors[index]}-100 rounded-lg flex items-center justify-center`}>
+                        <BookOpen className={`text-${colors[index]}-600`} size={24} />
+                      </div>
+                      <div>
+                        <p className="font-medium text-gray-900">{course}</p>
+                        <p className="text-sm text-gray-500">{45 + index * 5} students</p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="font-medium text-gray-900">{course}</p>
-                      <p className="text-sm text-gray-500">{45 + index * 5} students</p>
+                    <div className="text-right">
+                      <p className="text-sm font-medium text-gray-900">3 lessons</p>
+                      <p className="text-xs text-gray-500">Active</p>
                     </div>
                   </div>
-                  <div className="text-right">
-                    <p className="text-sm font-medium text-gray-900">3 lessons</p>
-                    <p className="text-xs text-gray-500">Active</p>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
 
@@ -112,11 +115,11 @@ export default function TeacherDashboard() {
             </div>
 
             {/* Alert */}
-            <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg flex items-start space-x-3">
-              <AlertCircle className="text-blue-600 flex-shrink-0 mt-1" size={20} />
+            <div className="mt-6 p-4 bg-teal-50 border border-teal-200 rounded-lg flex items-start space-x-3">
+              <AlertCircle className="text-teal-600 flex-shrink-0 mt-1" size={20} />
               <div>
-                <p className="text-sm font-medium text-blue-800">Reminder</p>
-                <p className="text-xs text-blue-700 mt-1">
+                <p className="text-sm font-medium text-teal-800">Reminder</p>
+                <p className="text-xs text-teal-700 mt-1">
                   You have 5 ungraded assignments waiting
                 </p>
               </div>

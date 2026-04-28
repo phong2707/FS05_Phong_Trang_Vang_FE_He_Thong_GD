@@ -8,4 +8,13 @@ const api = axios.create({
   withCredentials: true,
 });
 
+// THÊM ĐOẠN NÀY: Tự động đính kèm token vào mọi request
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('token');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
 export default api;

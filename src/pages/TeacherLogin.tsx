@@ -14,19 +14,21 @@ const TeacherLogin = () => {
     const data = await authService.login({ email, password });
     setIsLoading(false);
 
-    if (data && data.user) {
-      if (data.user.status === 'PENDING') {
-        alert("Tài khoản của bạn đang chờ Admin phê duyệt.");
-        return;
-      }
-      if (authService.isTeacher(data.user)) {
+    // Kiểm tra response từ backend
+    if (data && data.success) {
+      // Kiểm tra xem user có role TEACHER không
+      if (data.user && data.user.role === 'TEACHER') { // Assuming 'role' property exists on data.user
         localStorage.setItem('token', data.token);
-        navigate('/teacher/dashboard'); 
+        navigate('/teacher');
       } else {
-        alert("Bạn không có quyền truy cập vào khu vực Giáo viên.");
+        alert("Bạn không có quyền truy cập vào khu vực Giáo viên. Vui lòng liên hệ Admin.");
       }
+    } else if (data && data.message) {
+      // Backend trả về lỗi với message
+      alert(data.message);
     } else {
-      alert("Email hoặc mật khẩu không chính xác.");
+      // Lỗi không xác định
+      alert("Có lỗi xảy ra. Vui lòng thử lại sau.");
     }
   };
 

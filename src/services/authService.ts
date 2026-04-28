@@ -20,8 +20,13 @@ export async function logout() {
 }
 
 export async function getProfile() {
-  const res = await api.get('/auth/me').catch(() => null);
-  return res?.data ?? null;
+  try {
+    const res = await api.get('/auth/me');
+    return res?.data ?? null;
+  } catch (error: any) {
+    console.error('Get profile error:', error);
+    return error.response?.data || { success: false, message: "Server không phản hồi" };
+  }
 }
 
 export default { login, logout, getProfile, isTeacher };

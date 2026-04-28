@@ -17,7 +17,7 @@ const TeacherLogin = () => {
     // Kiểm tra response từ backend
     if (data && data.success) {
       // Kiểm tra xem user có role TEACHER không
-      if (authService.isTeacher(data.user)) {
+      if (data.user && data.user.role === 'TEACHER') { // Assuming 'role' property exists on data.user
         localStorage.setItem('token', data.token);
         navigate('/teacher');
       } else {

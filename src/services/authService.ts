@@ -9,9 +9,10 @@ export async function login(credentials: { email: string; password: string }) {
 
 // Thêm hàm kiểm tra quyền Giáo viên
 export const isTeacher = (user: any) => {
-  if (!user || !user.roles) return false;
-  // Kiểm tra mã role_code có phải là TEACHER hay không dựa trên RBAC Schema [cite: 6, 538]
-  return user.roles.some((r: any) => r.role.code === 'TEACHER');
+  if (!user || !user.roles || !Array.isArray(user.roles)) return false;
+  
+  // Sửa r.role.code thành r.code
+  return user.roles.some((r: any) => r.code === 'TEACHER'); 
 };
 
 export async function logout() {
@@ -20,8 +21,13 @@ export async function logout() {
 }
 
 export async function getProfile() {
-  const res = await api.get('/auth/me').catch(() => null);
-  return res?.data ?? null;
+  try {
+    const res = await api.get('/auth/me');
+    return res?.data ?? null;
+  } catch (error: any) {
+    console.error('Get profile error:', error);
+    return error.response?.data || { success: false, message: "Server không phản hồi" };
+  }
 }
 
 export default { login, logout, getProfile, isTeacher };

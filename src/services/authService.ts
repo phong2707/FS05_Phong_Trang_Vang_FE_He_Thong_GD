@@ -7,12 +7,19 @@ export async function login(credentials: { email: string; password: string }) {
   // Kết quả trả về nên có dạng: { token: string, user: { ..., roles: [{ role: { code: 'TEACHER' } }] } }
 }
 
+// 🆕 Hàm đăng nhập bằng Google ID Token
+export async function googleVerify(idToken: string) {
+  const res = await api.post('/v1/auth/google/verify', { idToken }).catch(() => null);
+  return res?.data ?? null;
+  // Kết quả trả về: { accessToken: string, refreshToken: string, user: { ..., roles: string[] } }
+}
+
 // Thêm hàm kiểm tra quyền Giáo viên
 export const isTeacher = (user: any) => {
   if (!user || !user.roles || !Array.isArray(user.roles)) return false;
   
   // Sửa r.role.code thành r.code
-  return user.roles.some((r: any) => r.code === 'TEACHER'); 
+  return user.roles.some((r: any) => r.code === 'TEACHER' || r === 'TEACHER'); 
 };
 
 export async function logout() {
@@ -30,4 +37,4 @@ export async function getProfile() {
   }
 }
 
-export default { login, logout, getProfile, isTeacher };
+export default { login, googleVerify, logout, getProfile, isTeacher };

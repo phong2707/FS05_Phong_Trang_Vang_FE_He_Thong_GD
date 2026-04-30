@@ -18,6 +18,7 @@ const TeacherLogin = () => {
     if (data && data.success) {
       if (authService.isTeacher(data.user)) { 
       localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify(data.user));
       navigate('/teacher');
       } else {
         alert("Bạn không có quyền truy cập vào khu vực Giáo viên. Vui lòng liên hệ Admin.");

@@ -1,6 +1,7 @@
 export { default as DashboardHeader } from './DashboardHeader';
 export { default as StatCard } from './StatCard';
 export { default as SidebarMenu } from './SidebarMenu';
+export { default as TeacherProfile } from './TeacherProfile';
 export { AboutUsSection } from './AboutUsSection';
 export { CourseCard } from './CourseCard';
 export { FeaturedCourses } from './FeaturedCourses';

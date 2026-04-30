@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import api from '@/api/apiClient';
-
 export async function login(credentials: { email: string; password: string }) {
   const res = await api.post('/auth/login', credentials).catch(() => null);
   return res?.data ?? null; 
@@ -36,5 +35,20 @@ export async function getProfile() {
     return error.response?.data || { success: false, message: "Server không phản hồi" };
   }
 }
+// Thêm vào file @/services/authService.ts
 
-export default { login, googleVerify, logout, getProfile, isTeacher };
+// Sửa trong @/services/authService.ts[cite: 17]
+export async function updateProfile(profileData: any) {
+  try {
+    // Sử dụng instance 'api' thay vì 'axios' để đi đúng đường dẫn backend
+    const response = await api.put('/auth/me', profileData); 
+    return response.data;
+  } catch (error: any) {
+    return {
+      success: false,
+      error: error.response?.data?.error || 'Không thể cập nhật thông tin',
+    };
+  }
+}
+
+export default { login, googleVerify, logout, getProfile, isTeacher, updateProfile };

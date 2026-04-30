@@ -1,4 +1,5 @@
 import { Bell, Settings, LogOut, User } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 interface DashboardHeaderProps {
   userName?: string;
@@ -6,6 +7,12 @@ interface DashboardHeaderProps {
 }
 
 export default function DashboardHeader({ userName = 'User', role = 'Admin' }: DashboardHeaderProps) {
+  const navigate = useNavigate();
+
+  const handleAvatarClick = () => {
+    navigate('/profile');
+  };
+
   return (
     <header className="bg-white shadow-sm border-b border-gray-200 px-6 py-4">
       <div className="flex items-center justify-between">
@@ -28,9 +35,13 @@ export default function DashboardHeader({ userName = 'User', role = 'Admin' }: D
 
           {/* User Menu */}
           <div className="flex items-center space-x-3 pl-6 border-l border-gray-200">
-            <div className="w-10 h-10 bg-teal-600 rounded-full flex items-center justify-center text-white">
+            <button
+              onClick={handleAvatarClick}
+              className="w-10 h-10 bg-teal-600 rounded-full flex items-center justify-center text-white hover:bg-teal-700 transition cursor-pointer"
+              title="Xem profile"
+            >
               <User size={20} />
-            </div>
+            </button>
             <div>
               <p className="text-sm font-medium text-gray-900">{userName}</p>
               <p className="text-xs text-gray-500">{role}</p>

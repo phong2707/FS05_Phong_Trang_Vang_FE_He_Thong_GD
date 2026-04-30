@@ -6,6 +6,7 @@ import AdminDashboard from '@/pages/AdminDashboard';
 import TeacherDashboard from '@/pages/TeacherDashboard';
 import StudentDashboard from '@/pages/StudentDashboard';
 import TeacherLogin from '@/pages/TeacherLogin';
+import ProfilePage from '@/pages/ProfilePage';
 
 export default function AppRoutes() {
   return (
@@ -17,13 +18,16 @@ export default function AppRoutes() {
       {/* 2. Trang đăng nhập cụ thể (Phải đặt trước các cụm /*) */}
       <Route path="/login/teacher" element={<TeacherLogin />} />
       
-      {/* 3. Các cụm Dashboard dành cho từng vai trò */}
+      {/* 3. Trang Profile */}
+      <Route path="/profile" element={<ProfilePage />} />
+      
+      {/* 4. Các cụm Dashboard dành cho từng vai trò */}
       {/* Dấu /* cho phép các trang con bên trong Dashboard hoạt động */}
       <Route path="/admin/*" element={<AdminDashboard />} />
       <Route path="/teacher/*" element={<TeacherDashboard />} />
       <Route path="/student/*" element={<StudentDashboard />} />
 
-      {/* 4. Xử lý khi không tìm thấy trang */}
+      {/* 5. Xử lý khi không tìm thấy trang */}
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );

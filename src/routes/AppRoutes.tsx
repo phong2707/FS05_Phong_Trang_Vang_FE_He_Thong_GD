@@ -18,6 +18,8 @@ import ClassGroupsPage from '@/pages/teacher/ClassGroupsPage';
 import TeacherCoursesPage from '@/pages/teacher/TeacherCoursesPage';
 import CourseDetailPage from '@/pages/teacher/CourseDetailPage';
 
+import ClassGroupStudentsPage from '@/pages/teacher/ClassGroupStudentsPage';
+
 
 export default function AppRoutes() {
   return (
@@ -64,6 +66,13 @@ export default function AppRoutes() {
           path="subjects/:subjectId/groups"
           element={<ClassGroupsPage />}
         />
+        
+{/* ✅ Sinh viên trong nhóm lớp */}
+  <Route
+    path="class-groups/:classGroupId/students"
+    element={<ClassGroupStudentsPage />}
+  />
+
       </Route>
 
       {/* 5. Dashboard Student */}

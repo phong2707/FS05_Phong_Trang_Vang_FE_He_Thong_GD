@@ -166,9 +166,13 @@ const TeacherLogin = () => {
               </div>
 
               <div className="text-sm">
-                <a href="#" className="font-medium hover:opacity-80 transition-opacity" style={{ color: '#059669' }}>
+                <Link 
+                  to="/teacher/forgot-password" 
+                  className="font-medium hover:opacity-80 transition-opacity" 
+                  style={{ color: '#059669' }}
+                >
                   Quên mật khẩu?
-                </a>
+                </Link>
               </div>
             </div>
 

@@ -21,9 +21,27 @@ export const isTeacher = (user: any) => {
   return user.roles.some((r: any) => r.code === 'TEACHER' || r === 'TEACHER'); 
 };
 
-export async function logout() {
+export async function logout(redirectPath: string = '/auth') {
   await api.post('/auth/logout').catch(() => null);
-  localStorage.removeItem('token'); // Đảm bảo xóa token khi đăng xuất
+  localStorage.removeItem('token');
+  window.location.href = redirectPath; // Điều hướng về trang login tương ứng
+}
+
+export async function forgotPassword(email: string) {
+  const res = await api.post('/auth/forgot-password', { email });
+  return res.data;
+}
+
+export async function verifyOtp(email: string, otp: string) {
+  const res = await api.post('/auth/verify-otp', { email, otp });
+  return res.data; // { success: true, resetToken: '...' }
+}
+
+export async function resetPassword(passwordData: any, resetToken: string) {
+  const res = await api.post('/auth/reset-password', passwordData, {
+    headers: { Authorization: `Bearer ${resetToken}` }
+  });
+  return res.data;
 }
 
 export async function getProfile() {
@@ -35,7 +53,6 @@ export async function getProfile() {
     return error.response?.data || { success: false, message: "Server không phản hồi" };
   }
 }
-// Thêm vào file @/services/authService.ts
 
 // Sửa trong @/services/authService.ts[cite: 17]
 export async function updateProfile(profileData: any) {
@@ -51,4 +68,22 @@ export async function updateProfile(profileData: any) {
   }
 }
 
-export default { login, googleVerify, logout, getProfile, isTeacher, updateProfile };
+// Sửa lại hàm changePassword trong authService_4.ts
+export async function changePassword(data: { 
+  oldPassword?: string; 
+  password: string; 
+  passwordConfirmation: string 
+}) {
+  try {
+    // data này sẽ bao gồm oldPassword nếu đổi từ profile 
+    // hoặc chỉ password/passwordConfirmation nếu reset từ OTP
+    const res = await api.put('/auth/change-password', data);
+    return res.data;
+  } catch (error: any) {
+    return error.response?.data || { success: false, message: "Lỗi kết nối" };
+  }
+}
+
+
+
+export default { login, googleVerify, logout, getProfile, isTeacher, updateProfile, forgotPassword, verifyOtp, resetPassword, changePassword };

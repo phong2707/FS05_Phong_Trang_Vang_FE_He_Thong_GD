@@ -1,5 +1,6 @@
 import { Bell, Settings, LogOut, User } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import authService from '@/services/authService';
 
 interface DashboardHeaderProps {
   userName?: string;
@@ -11,6 +12,13 @@ export default function DashboardHeader({ userName = 'User', role = 'Admin' }: D
 
   const handleAvatarClick = () => {
     navigate('/profile');
+  };
+
+  const handleLogout = async () => {
+    // Xác định đường dẫn login dựa trên role
+    const loginPath = '/';
+
+    await authService.logout(loginPath);
   };
 
   return (
@@ -46,7 +54,11 @@ export default function DashboardHeader({ userName = 'User', role = 'Admin' }: D
               <p className="text-sm font-medium text-gray-900">{userName}</p>
               <p className="text-xs text-gray-500">{role}</p>
             </div>
-            <button className="text-gray-500 hover:text-gray-700 ml-2">
+            <button
+              onClick={handleLogout}
+              className="text-gray-500 hover:text-red-600 ml-2 transition-colors"
+              title="Đăng xuất"
+            >
               <LogOut size={20} />
             </button>
           </div>
@@ -55,3 +67,4 @@ export default function DashboardHeader({ userName = 'User', role = 'Admin' }: D
     </header>
   );
 }
+

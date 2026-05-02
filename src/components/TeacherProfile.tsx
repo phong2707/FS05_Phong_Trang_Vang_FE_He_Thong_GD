@@ -4,8 +4,9 @@ import { useEffect, useState } from 'react';
 import {
   Mail, Phone, MapPin, User,
   AlertCircle, Loader, Edit3, KeyRound,
-  CheckCircle, Clock, Shield, X, Save
+  CheckCircle, Clock, Shield, X, Save, LogOut
 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import authService from '@/services/authService';
 
 interface UserProfile {
@@ -48,10 +49,13 @@ const STATUS_LABEL: Record<string, string> = {
 };
 
 export default function TeacherProfile() {
+  const navigate = useNavigate();
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showPassModal, setShowPassModal] = useState(false);
+  const [passData, setPassData] = useState({ oldPassword: '', password: '', passwordConfirmation: '' });
   
   // States cho chức năng chỉnh sửa
   const [isEditing, setIsEditing] = useState(false);
@@ -111,6 +115,46 @@ export default function TeacherProfile() {
     } finally {
       setIsSaving(false);
     }
+  };
+
+// 1. Sửa lại hàm handleChangePassword hiện có
+const handleChangePassword = async () => {
+  // Kiểm tra tính hợp lệ của dữ liệu
+  if (!passData.oldPassword || !passData.password || !passData.passwordConfirmation) {
+    alert("Vui lòng nhập đầy đủ các trường thông tin");
+    return;
+  }
+
+  if (passData.password !== passData.passwordConfirmation) {
+    alert("Mật khẩu mới và xác nhận mật khẩu không khớp");
+    return;
+  }
+
+  try {
+    setIsSaving(true); // Dùng chung state loading với update profile hoặc tạo mới
+    const response = await authService.changePassword(passData);
+    
+    if (response.success) {
+      alert("Đổi mật khẩu thành công!");
+      setShowPassModal(false); // Đóng modal
+      setPassData({ oldPassword: '', password: '', passwordConfirmation: '' }); // Reset form
+    } else {
+      alert(response.message || "Đổi mật khẩu thất bại. Vui lòng kiểm tra lại mật khẩu cũ.");
+    }
+  } catch (err) {
+    alert("Có lỗi xảy ra trong quá trình đổi mật khẩu");
+  } finally {
+    setIsSaving(false);
+  }
+};
+
+// 2. Hàm để cập nhật input trong modal
+const handlePassInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const { name, value } = e.target;
+  setPassData(prev => ({ ...prev, [name]: value }));
+};
+  const handleLogout = async () => {
+    await authService.logout('/teacher/login');
   };
 
   if (loading) {
@@ -228,8 +272,18 @@ export default function TeacherProfile() {
                     >
                       <Edit3 size={14} /> Chỉnh sửa
                     </button>
-                    <button className="inline-flex items-center gap-1.5 px-4 py-2 border border-stone-300 text-gray-700 text-sm font-semibold rounded-lg hover:bg-stone-100 transition">
-                      <KeyRound size={14} /> Đổi mật khẩu
+<button
+  onClick={() => setShowPassModal(true)} // Sửa từ handleChangePassword thành setShowPassModal(true)
+  className="inline-flex items-center gap-1.5 px-4 py-2 border border-stone-300 text-gray-700 text-sm font-semibold rounded-lg hover:bg-stone-100 transition"
+>
+  <KeyRound size={14} /> Đổi mật khẩu
+</button>
+                    {/* Nút logout bổ sung trong profile (tùy chọn) */}
+                    <button
+                      onClick={handleLogout}
+                      className="sm:hidden inline-flex items-center gap-1.5 px-4 py-2 border border-red-200 text-red-600 text-sm font-semibold rounded-lg hover:bg-red-50 transition"
+                    >
+                      <LogOut size={14} /> Thoát
                     </button>
                   </>
                 )}
@@ -250,7 +304,6 @@ export default function TeacherProfile() {
                 <p className="text-sm font-semibold text-gray-900 break-all">{profile.email}</p>
               </div>
             </div>
-
             <div className="flex items-center gap-4 p-4 border border-stone-200 rounded-lg bg-white">
               <div className="w-11 h-11 bg-emerald-100 rounded-lg flex items-center justify-center flex-shrink-0"><Phone className="text-emerald-600" size={20} /></div>
               <div className="flex-1">
@@ -305,7 +358,7 @@ export default function TeacherProfile() {
             </div>
             <div className="bg-stone-50 border border-stone-100 rounded-lg p-4 min-w-0">
               <p className="text-xs text-gray-400 mb-1">Mã thành viên</p>
-              <p className="text-sm font-semibold text-gray-900 truncate">{profile.id.substring(0, 8)}...</p>[cite: 9, 10]
+              <p className="text-sm font-semibold text-gray-900 truncate">{profile.id.substring(0, 8)}...</p>
             </div>
           </div>
         </div>
@@ -318,7 +371,7 @@ export default function TeacherProfile() {
                 <div key={role.id} className="flex items-center justify-between p-3 border border-stone-200 rounded-lg bg-white">
                   <div className="flex items-center gap-2">
                     <div className="w-8 h-8 bg-teal-100 rounded-lg flex items-center justify-center"><Shield size={14} className="text-teal-600" /></div>
-                    <span className="text-sm font-semibold text-gray-900">{role.name}</span>[cite: 9, 10]
+                    <span className="text-sm font-semibold text-gray-900">{role.name}</span>
                   </div>
                 </div>
               ))}
@@ -334,6 +387,85 @@ export default function TeacherProfile() {
           </div>
         </div>
       </div>
+      {/* MODAL ĐỔI MẬT KHẨU */}
+      {showPassModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in duration-200">
+            {/* Header Modal */}
+            <div className="px-6 py-4 border-b border-stone-100 flex items-center justify-between bg-teal-50">
+              <div className="flex items-center gap-2 text-teal-700">
+                <KeyRound size={20} />
+                <h3 className="font-bold">Đổi mật khẩu</h3>
+              </div>
+              <button 
+                onClick={() => setShowPassModal(false)}
+                className="text-stone-400 hover:text-stone-600 transition"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            {/* Body Modal */}
+            <div className="p-6 space-y-4">
+              <div>
+                <label className="block text-xs font-semibold text-stone-500 uppercase mb-1">Mật khẩu hiện tại</label>
+                <input
+                  type="password"
+                  name="oldPassword"
+                  value={passData.oldPassword}
+                  onChange={handlePassInputChange}
+                  className="w-full px-3 py-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-teal-500 outline-none transition"
+                  placeholder="••••••••"
+                />
+              </div>
+
+              <div className="h-px bg-stone-100 my-2" />
+
+              <div>
+                <label className="block text-xs font-semibold text-stone-500 uppercase mb-1">Mật khẩu mới</label>
+                <input
+                  type="password"
+                  name="password"
+                  value={passData.password}
+                  onChange={handlePassInputChange}
+                  className="w-full px-3 py-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-teal-500 outline-none transition"
+                  placeholder="Tối thiểu 6 ký tự"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-stone-500 uppercase mb-1">Xác nhận mật khẩu mới</label>
+                <input
+                  type="password"
+                  name="passwordConfirmation"
+                  value={passData.passwordConfirmation}
+                  onChange={handlePassInputChange}
+                  className="w-full px-3 py-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-teal-500 outline-none transition"
+                  placeholder="Nhập lại mật khẩu mới"
+                />
+              </div>
+            </div>
+
+            {/* Footer Modal */}
+            <div className="px-6 py-4 bg-stone-50 flex gap-3 justify-end">
+              <button
+                onClick={() => setShowPassModal(false)}
+                className="px-4 py-2 text-sm font-semibold text-stone-600 hover:bg-stone-200 rounded-lg transition"
+              >
+                Hủy
+              </button>
+              <button
+                onClick={handleChangePassword}
+                disabled={isSaving}
+                className="px-4 py-2 bg-teal-600 text-white text-sm font-semibold rounded-lg hover:bg-teal-700 transition shadow-md disabled:opacity-50 flex items-center gap-2"
+              >
+                {isSaving && <Loader size={14} className="animate-spin" />}
+                Cập nhật mật khẩu
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

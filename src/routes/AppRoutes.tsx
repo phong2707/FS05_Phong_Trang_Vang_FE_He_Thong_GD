@@ -7,6 +7,7 @@ import TeacherDashboard from '@/pages/TeacherDashboard';
 import StudentDashboard from '@/pages/StudentDashboard';
 import TeacherLogin from '@/pages/TeacherLogin';
 import ProfilePage from '@/pages/ProfilePage';
+import ForgotPasswordForm from '@/components/ForgotPasswordForm'; // Import component đã viết ở bước trước
 
 export default function AppRoutes() {
   return (
@@ -15,12 +16,23 @@ export default function AppRoutes() {
       <Route path="/" element={<HomePage />} />
       <Route path="/roles" element={<RoleSelectionPage />} />
       
-      {/* 2. Trang đăng nhập cụ thể (Phải đặt trước các cụm /*) */}
+      {/* 2. Luồng Đăng nhập & Quên mật khẩu (Phải đặt TRƯỚC các cụm /*) */}
       <Route path="/login/teacher" element={<TeacherLogin />} />
       
-      {/* 3. Trang Profile */}
+      {/* Thêm Route này ở đây để nó không bị rơi vào cụm /teacher/* phía dưới */}
+      <Route
+        path="/teacher/forgot-password"
+        element={
+          <ForgotPasswordForm
+            role="TEACHER"
+            themeColor="teal"
+            loginPath="/login/teacher"
+          />
+        }
+      />
+      {/* 3. Trang Profile cá nhân */}
       <Route path="/profile" element={<ProfilePage />} />
-      
+  
       {/* 4. Các cụm Dashboard dành cho từng vai trò */}
       {/* Dấu /* cho phép các trang con bên trong Dashboard hoạt động */}
       <Route path="/admin/*" element={<AdminDashboard />} />

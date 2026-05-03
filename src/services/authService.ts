@@ -20,6 +20,14 @@ export const isTeacher = (user: any) => {
   // Sửa r.role.code thành r.code
   return user.roles.some((r: any) => r.code === 'TEACHER' || r === 'TEACHER'); 
 };
+export const isStudent = (user: any) => {
+  if (!user || !user.roles || !Array.isArray(user.roles)) return false;
+  return user.roles.some((r: any) => 
+    r.code === 'STUDENT' || 
+    r === 'STUDENT' || 
+    (r.role && r.role.code === 'STUDENT')
+  ); 
+};
 
 export async function logout(redirectPath: string = '/auth') {
   await api.post('/auth/logout').catch(() => null);
@@ -86,4 +94,4 @@ export async function changePassword(data: {
 
 
 
-export default { login, googleVerify, logout, getProfile, isTeacher, updateProfile, forgotPassword, verifyOtp, resetPassword, changePassword };
+export default { login, googleVerify, logout, getProfile, isTeacher, isStudent, updateProfile, forgotPassword, verifyOtp, resetPassword, changePassword };

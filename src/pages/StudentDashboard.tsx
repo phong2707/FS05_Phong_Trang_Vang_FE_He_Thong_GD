@@ -58,7 +58,7 @@ function getProgressTextColor(pct: number) {
 export default function StudentDashboard() {
   return (
     <SidebarLayout sidebar={<SidebarMenu items={studentMenuItems} />}>
-      <DashboardHeader userName="Sarah Johnson" role="Student" />
+      <DashboardHeader  />
 
       <main className="flex-1 overflow-auto p-6" style={{ background: '#f0faf8' }}>
 

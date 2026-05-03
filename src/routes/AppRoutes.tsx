@@ -9,6 +9,7 @@ import TeacherLogin from '@/pages/TeacherLogin';
 import ProfilePage from '@/pages/ProfilePage';
 import ForgotPasswordForm from '@/components/ForgotPasswordForm'; 
 import StudentLogin from '@/pages/StudentLogin';
+import AdminLogin from '@/pages/AdminLogin';
 
 export default function AppRoutes() {
   return (
@@ -18,6 +19,7 @@ export default function AppRoutes() {
       <Route path="/roles" element={<RoleSelectionPage />} />
       
       {/* 2. Luồng Đăng nhập & Quên mật khẩu (Phải đặt TRƯỚC các cụm /*) */}
+      <Route path="/login/admin" element={<AdminLogin />} />
       <Route path="/login/teacher" element={<TeacherLogin />} />
       <Route path="/login/student" element={<StudentLogin />} />
       

@@ -7,7 +7,8 @@ import TeacherDashboard from '@/pages/TeacherDashboard';
 import StudentDashboard from '@/pages/StudentDashboard';
 import TeacherLogin from '@/pages/TeacherLogin';
 import ProfilePage from '@/pages/ProfilePage';
-import ForgotPasswordForm from '@/components/ForgotPasswordForm'; // Import component đã viết ở bước trước
+import ForgotPasswordForm from '@/components/ForgotPasswordForm'; 
+import StudentLogin from '@/pages/StudentLogin';
 
 export default function AppRoutes() {
   return (
@@ -18,6 +19,7 @@ export default function AppRoutes() {
       
       {/* 2. Luồng Đăng nhập & Quên mật khẩu (Phải đặt TRƯỚC các cụm /*) */}
       <Route path="/login/teacher" element={<TeacherLogin />} />
+      <Route path="/login/student" element={<StudentLogin />} />
       
       {/* Thêm Route này ở đây để nó không bị rơi vào cụm /teacher/* phía dưới */}
       <Route

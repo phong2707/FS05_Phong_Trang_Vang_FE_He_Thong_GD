@@ -27,7 +27,7 @@ export default function AdminDashboard() {
     <SidebarLayout
       sidebar={<SidebarMenu items={adminMenuItems} />}
     >
-      <DashboardHeader userName="Admin User" role="Admin" />
+      <DashboardHeader />
 
       <main className="flex-1 overflow-auto bg-stone-50 p-6">
         {/* Stats Grid */}

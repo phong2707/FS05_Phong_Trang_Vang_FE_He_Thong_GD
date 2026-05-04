@@ -28,7 +28,7 @@ export default function TeacherDashboard() {
     <SidebarLayout
       sidebar={<SidebarMenu items={teacherMenuItems} />}
     >
-      <DashboardHeader userName="Prof. John Smith" role="Teacher" />
+      <DashboardHeader/>
 
       <main className="flex-1 overflow-auto bg-stone-50 p-6">
         {/* Stats Grid */}

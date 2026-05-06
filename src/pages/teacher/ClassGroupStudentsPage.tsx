@@ -9,9 +9,20 @@ import {
 import StudentList from '@/components/class-group/StudentList';
 import AddStudentForm from '@/components/class-group/AddStudentForm';
 
+import { AxiosError } from "axios";
+
+type StudentInGroup = {
+  user: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+  };
+};
+
 export default function ClassGroupStudentsPage() {
   const { classGroupId } = useParams();
-  const [students, setStudents] = useState<any[]>([]);
+  const [students, setStudents] = useState<StudentInGroup[]>([]);
 
   useEffect(() => {
     if (!classGroupId) return;
@@ -40,11 +51,26 @@ export default function ClassGroupStudentsPage() {
       </h1>
 
       <AddStudentForm
-        onAdd={async (studentId) => {
-          await addStudentToGroup(classGroupId!, studentId);
-          refreshStudents();
-        }}
-      />
+  onAdd={async (email) => {
+    try {
+      await addStudentToGroup(classGroupId!, email);
+      await refreshStudents();
+    } catch (err: unknown) {
+      
+{
+      if (err instanceof AxiosError) {
+        throw new Error(
+          (err.response?.data as { message?: string })?.message ||
+            "Ghi danh thất bại"
+        );
+      }
+
+      throw new Error("Ghi danh thất bại");
+
+    }
+  }}
+}
+/>
 
       <StudentList
         students={students}

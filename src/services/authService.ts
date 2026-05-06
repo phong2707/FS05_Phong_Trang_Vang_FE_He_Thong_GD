@@ -3,7 +3,7 @@ import api from '@/api/apiClient';
 
 export async function login(credentials: { email: string; password: string }) {
   // ✅ DÙNG ENDPOINT CHO SPA (JWT)
-  const res = await api.post('/api/v1/auth/login', credentials).catch(() => null);
+  const res = await api.post('/v1/auth/login', credentials).catch(() => null);
   return res?.data ?? null;
   // Response mong đợi:
   // {

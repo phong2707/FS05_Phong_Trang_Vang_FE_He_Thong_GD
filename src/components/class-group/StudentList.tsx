@@ -1,8 +1,18 @@
+type StudentInGroup = {
+  user: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+  };
+};
+
+
 export default function StudentList({
   students,
   onRemove,
 }: {
-  students: any[];
+  students: StudentInGroup[];
   onRemove: (studentId: string) => Promise<void>;
 }) {
   if (students.length === 0) {

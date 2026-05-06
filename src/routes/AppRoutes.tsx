@@ -10,6 +10,8 @@ import ProfilePage from '@/pages/ProfilePage';
 import ForgotPasswordForm from '@/components/ForgotPasswordForm'; 
 import StudentLogin from '@/pages/StudentLogin';
 import AdminLogin from '@/pages/AdminLogin';
+import UserManagementPage from '@/pages/admin/UserManagement';
+
 
 export default function AppRoutes() {
   return (
@@ -40,6 +42,7 @@ export default function AppRoutes() {
       {/* 4. Các cụm Dashboard dành cho từng vai trò */}
       {/* Dấu /* cho phép các trang con bên trong Dashboard hoạt động */}
       <Route path="/admin/*" element={<AdminDashboard />} />
+      <Route path="/admin/users" element={<UserManagementPage />} />
       <Route path="/teacher/*" element={<TeacherDashboard />} />
       <Route path="/student/*" element={<StudentDashboard />} />
 

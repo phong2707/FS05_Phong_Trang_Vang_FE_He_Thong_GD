@@ -2,7 +2,7 @@
 import api from '@/api/apiClient';
 export async function login(credentials: { email: string; password: string }) {
   // ✅ DÙNG ENDPOINT CHO SPA (JWT)
-  const res = await api.post('/v1/auth/login', credentials).catch(() => null);
+  const res = await api.post('/api/v1/auth/login', credentials).catch(() => null);
   return res?.data ?? null;
   // Response mong đợi:
   // {
@@ -14,7 +14,6 @@ export async function login(credentials: { email: string; password: string }) {
   // }
 }
 
-<<<<<<< HEAD
 // 🆕 Hàm đăng nhập bằng Google ID Token
 export async function googleVerify(idToken: string) {
   const res = await api.post('/v1/auth/google/verify', { idToken }).catch(() => null);
@@ -44,18 +43,11 @@ export const isAdmin = (user: any) => {
     r === 'ADMIN' || 
     (r.role && r.role.code === 'ADMIN')
   ); 
-=======
-// ✅ Kiểm tra quyền giáo viên – PHÙ HỢP 100% BE
-export const isTeacher = (user: any) => {
-  if (!user || !user.roles || !Array.isArray(user.roles)) return false;
-  return user.roles.some((r: any) => r.code === 'TEACHER');
->>>>>>> 5533719 (feat(teacher): implement course overview and class group CRUD UI)
 };
 
 export async function logout(redirectPath: string = '/auth') {
   await api.post('/auth/logout').catch(() => null);
   localStorage.removeItem('token');
-<<<<<<< HEAD
   window.location.href = redirectPath; // Điều hướng về trang login tương ứng
 }
 
@@ -74,8 +66,6 @@ export async function resetPassword(passwordData: any, resetToken: string) {
     headers: { Authorization: `Bearer ${resetToken}` }
   });
   return res.data;
-=======
->>>>>>> 5533719 (feat(teacher): implement course overview and class group CRUD UI)
 }
 
 export async function getProfile() {
@@ -88,7 +78,6 @@ export async function getProfile() {
   }
 }
 
-<<<<<<< HEAD
 // Sửa trong @/services/authService.ts[cite: 17]
 export async function updateProfile(profileData: any) {
   try {
@@ -122,6 +111,3 @@ export async function changePassword(data: {
 
 
 export default { login, googleVerify, logout, getProfile, isTeacher, isStudent, isAdmin, updateProfile, forgotPassword, verifyOtp, resetPassword, changePassword };
-=======
-export default { login, logout, getProfile, isTeacher };
->>>>>>> 5533719 (feat(teacher): implement course overview and class group CRUD UI)

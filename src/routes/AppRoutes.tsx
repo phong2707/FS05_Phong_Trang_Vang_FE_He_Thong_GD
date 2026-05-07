@@ -27,7 +27,6 @@ export default function AppRoutes() {
       {/* 1. Các trang công khai */}
       <Route path="/" element={<HomePage />} />
       <Route path="/roles" element={<RoleSelectionPage />} />
-<<<<<<< HEAD
       
       {/* 2. Luồng Đăng nhập & Quên mật khẩu (Phải đặt TRƯỚC các cụm /*) */}
       <Route path="/login/admin" element={<AdminLogin />} />
@@ -50,13 +49,6 @@ export default function AppRoutes() {
   
       {/* 4. Các cụm Dashboard dành cho từng vai trò */}
       {/* Dấu /* cho phép các trang con bên trong Dashboard hoạt động */}
-=======
-
-      {/* 2. Trang đăng nhập */}
-      <Route path="/login/teacher" element={<TeacherLogin />} />
-
-      {/* 3. Dashboard Admin */}
->>>>>>> 5533719 (feat(teacher): implement course overview and class group CRUD UI)
       <Route path="/admin/*" element={<AdminDashboard />} />
 
       {/* 4. Dashboard Teacher (nested routes) */}
@@ -78,11 +70,7 @@ export default function AppRoutes() {
       {/* 5. Dashboard Student */}
       <Route path="/student/*" element={<StudentDashboard />} />
 
-<<<<<<< HEAD
-      {/* 5. Xử lý khi không tìm thấy trang */}
-=======
       {/* 6. Not found */}
->>>>>>> 5533719 (feat(teacher): implement course overview and class group CRUD UI)
       <Route path="*" element={<Navigate to="/" replace />} />
 
       <Route path="/teacher/courses" element={<TeacherCoursesPage />} />

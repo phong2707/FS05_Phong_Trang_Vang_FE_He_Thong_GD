@@ -10,6 +10,8 @@ import ProfilePage from '@/pages/ProfilePage';
 import ForgotPasswordForm from '@/components/ForgotPasswordForm'; 
 import StudentLogin from '@/pages/StudentLogin';
 import AdminLogin from '@/pages/AdminLogin';
+import UserManagementPage from '@/pages/admin/UserManagement';
+
 
 import TeacherHome from '@/pages/teacher/TeacherHome';
 import ClassGroupsPage from '@/pages/teacher/ClassGroupsPage';

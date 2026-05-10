@@ -1,40 +1,39 @@
 // frontend/src/routes/AppRoutes.tsx
 import { Routes, Route, Navigate } from 'react-router-dom';
+
 import HomePage from '@/pages/HomePage';
 import RoleSelectionPage from '@/pages/RoleSelectionPage';
+
 import AdminDashboard from '@/pages/AdminDashboard';
 import TeacherDashboard from '@/pages/TeacherDashboard';
 import StudentDashboard from '@/pages/StudentDashboard';
+
 import TeacherLogin from '@/pages/TeacherLogin';
-import ProfilePage from '@/pages/ProfilePage';
-import ForgotPasswordForm from '@/components/ForgotPasswordForm'; 
 import StudentLogin from '@/pages/StudentLogin';
 import AdminLogin from '@/pages/AdminLogin';
 
+import ProfilePage from '@/pages/ProfilePage';
+import ForgotPasswordForm from '@/components/ForgotPasswordForm';
+
 import TeacherHome from '@/pages/teacher/TeacherHome';
 import ClassGroupsPage from '@/pages/teacher/ClassGroupsPage';
-
-
+import ClassGroupStudentsPage from '@/pages/teacher/ClassGroupStudentsPage';
 import TeacherCoursesPage from '@/pages/teacher/TeacherCoursesPage';
 import CourseDetailPage from '@/pages/teacher/CourseDetailPage';
-
-import ClassGroupStudentsPage from '@/pages/teacher/ClassGroupStudentsPage';
-
 
 export default function AppRoutes() {
   return (
     <Routes>
-      {/* 1. Các trang công khai */}
+      {/* 1. Public pages */}
       <Route path="/" element={<HomePage />} />
       <Route path="/roles" element={<RoleSelectionPage />} />
-<<<<<<< HEAD
-      
-      {/* 2. Luồng Đăng nhập & Quên mật khẩu (Phải đặt TRƯỚC các cụm /*) */}
+
+      {/* 2. Login */}
       <Route path="/login/admin" element={<AdminLogin />} />
       <Route path="/login/teacher" element={<TeacherLogin />} />
       <Route path="/login/student" element={<StudentLogin />} />
-      
-      {/* Thêm Route này ở đây để nó không bị rơi vào cụm /teacher/* phía dưới */}
+
+      {/* Forgot password for teacher */}
       <Route
         path="/teacher/forgot-password"
         element={
@@ -45,48 +44,36 @@ export default function AppRoutes() {
           />
         }
       />
-      {/* 3. Trang Profile cá nhân */}
+
+      {/* 3. Profile */}
       <Route path="/profile" element={<ProfilePage />} />
-  
-      {/* 4. Các cụm Dashboard dành cho từng vai trò */}
-      {/* Dấu /* cho phép các trang con bên trong Dashboard hoạt động */}
-=======
 
-      {/* 2. Trang đăng nhập */}
-      <Route path="/login/teacher" element={<TeacherLogin />} />
-
-      {/* 3. Dashboard Admin */}
->>>>>>> 5533719 (feat(teacher): implement course overview and class group CRUD UI)
+      {/* 4. Admin Dashboard */}
       <Route path="/admin/*" element={<AdminDashboard />} />
 
-      {/* 4. Dashboard Teacher (nested routes) */}
+      {/* 5. Teacher Dashboard (nested routes) */}
       <Route path="/teacher/*" element={<TeacherDashboard />}>
         <Route index element={<TeacherHome />} />
+
         <Route
           path="subjects/:subjectId/groups"
           element={<ClassGroupsPage />}
         />
-        
-{/* ✅ Sinh viên trong nhóm lớp */}
-  <Route
-    path="class-groups/:classGroupId/students"
-    element={<ClassGroupStudentsPage />}
-  />
 
+        <Route
+          path="class-groups/:classGroupId/students"
+          element={<ClassGroupStudentsPage />}
+        />
+
+        <Route path="courses" element={<TeacherCoursesPage />} />
+        <Route path="courses/:id" element={<CourseDetailPage />} />
       </Route>
 
-      {/* 5. Dashboard Student */}
+      {/* 6. Student Dashboard */}
       <Route path="/student/*" element={<StudentDashboard />} />
 
-<<<<<<< HEAD
-      {/* 5. Xử lý khi không tìm thấy trang */}
-=======
-      {/* 6. Not found */}
->>>>>>> 5533719 (feat(teacher): implement course overview and class group CRUD UI)
+      {/* 7. Not found */}
       <Route path="*" element={<Navigate to="/" replace />} />
-
-      <Route path="/teacher/courses" element={<TeacherCoursesPage />} />
-<Route path="/teacher/courses/:id" element={<CourseDetailPage />} />
     </Routes>
   );
 }

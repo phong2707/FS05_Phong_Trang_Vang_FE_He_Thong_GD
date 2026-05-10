@@ -11,6 +11,8 @@ import StudentDashboard from '@/pages/StudentDashboard';
 import TeacherLogin from '@/pages/TeacherLogin';
 import StudentLogin from '@/pages/StudentLogin';
 import AdminLogin from '@/pages/AdminLogin';
+import UserManagementPage from '@/pages/admin/UserManagement';
+
 
 import ProfilePage from '@/pages/ProfilePage';
 import ForgotPasswordForm from '@/components/ForgotPasswordForm';
@@ -27,8 +29,8 @@ export default function AppRoutes() {
       {/* 1. Public pages */}
       <Route path="/" element={<HomePage />} />
       <Route path="/roles" element={<RoleSelectionPage />} />
-
-      {/* 2. Login */}
+      
+      {/* 2. Luồng Đăng nhập & Quên mật khẩu (Phải đặt TRƯỚC các cụm /*) */}
       <Route path="/login/admin" element={<AdminLogin />} />
       <Route path="/login/teacher" element={<TeacherLogin />} />
       <Route path="/login/student" element={<StudentLogin />} />
@@ -47,8 +49,9 @@ export default function AppRoutes() {
 
       {/* 3. Profile */}
       <Route path="/profile" element={<ProfilePage />} />
-
-      {/* 4. Admin Dashboard */}
+  
+      {/* 4. Các cụm Dashboard dành cho từng vai trò */}
+      {/* Dấu /* cho phép các trang con bên trong Dashboard hoạt động */}
       <Route path="/admin/*" element={<AdminDashboard />} />
 
       {/* 5. Teacher Dashboard (nested routes) */}
@@ -72,7 +75,7 @@ export default function AppRoutes() {
       {/* 6. Student Dashboard */}
       <Route path="/student/*" element={<StudentDashboard />} />
 
-      {/* 7. Not found */}
+      {/* 6. Not found */}
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );

@@ -12,6 +12,7 @@ import TeacherLogin from '@/pages/TeacherLogin';
 import StudentLogin from '@/pages/StudentLogin';
 import AdminLogin from '@/pages/AdminLogin';
 import UserManagementPage from '@/pages/admin/UserManagement';
+import RoleManagementPage from '@/pages/admin/RoleManagement'; // Import mới
 
 
 import ProfilePage from '@/pages/ProfilePage';
@@ -53,6 +54,8 @@ export default function AppRoutes() {
       {/* 4. Các cụm Dashboard dành cho từng vai trò */}
       {/* Dấu /* cho phép các trang con bên trong Dashboard hoạt động */}
       <Route path="/admin/*" element={<AdminDashboard />} />
+      <Route path="/admin/users" element={<UserManagementPage />} />
+      <Route path="/admin/roles" element={<RoleManagementPage />} /> {/* Route mới cho RBAC */}
 
       {/* 5. Teacher Dashboard (nested routes) */}
       <Route path="/teacher/*" element={<TeacherDashboard />}>

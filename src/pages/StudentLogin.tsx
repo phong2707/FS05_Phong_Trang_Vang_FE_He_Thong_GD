@@ -30,23 +30,35 @@ const StudentLogin = () => {
     }
   };
 
-  const handleGoogleLogin = async (credentialResponse: any) => {
+ const handleGoogleLogin = async (credentialResponse: any) => {
     try {
-      const response = await authService.googleVerify(credentialResponse.credential);
-      const result = response?.data; 
-      const validToken = result?.accessToken || result?.token;
-      const userData = result?.user;
+      const idToken = credentialResponse.credential;
+      if (!idToken) {
+        alert("Không thể lấy token từ Google.");
+        return;
+      }
+
+      const response = await authService.googleVerify(idToken);
+      
+      // ✅ FIX: Lấy trực tiếp token và user từ response y hệt như bên Teacher
+      const validToken = response?.token;
+      const userData = response?.user;
 
       if (response?.success && validToken) {
+        // Kiểm tra quyền Sinh viên
         if (authService.isStudent(userData)) { 
           localStorage.setItem('token', validToken);
-          navigate('/student');
+          navigate('/student'); // Chuyển thẳng vào trang Dashboard Sinh viên
         } else {
           alert("Tài khoản Google này chưa được đăng ký vai trò Sinh viên.");
         }
+      } else {
+        // Backend trả về lỗi (ví dụ: chưa đăng ký, bị khóa,...)
+        alert(response?.message || "Đăng nhập thất bại. Vui lòng kiểm tra lại dữ liệu.");
       }
-    } catch (error) {
-      alert("Đăng nhập Google thất bại.");
+    } catch (error: any) {
+      console.error('Google login error:', error);
+      alert("Đăng nhập Google thất bại. Lỗi kết nối server.");
     }
   };
 

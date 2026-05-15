@@ -12,6 +12,16 @@ export interface Course {
   createdAt: string;
   subjectCount?: number;
   subjects?: Subject[];
+  startDate?: string;
+  endDate?: string;
+  durationValue?: number;
+  durationUnit?: string;
+  daysOfWeek?: string;
+  level?: string;
+  maxStudents?: number;
+  language?: string;
+  isFeatured?: boolean;
+  discountPrice?: number;
 }
 
 export interface Subject {
@@ -26,7 +36,7 @@ export interface Teacher {
   firstName: string;
   lastName: string;
   email: string;
-  avatar?: string;
+  avatarUrl?: string;
 }
 
 export const adminCourseService = {

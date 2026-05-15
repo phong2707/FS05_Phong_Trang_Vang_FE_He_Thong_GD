@@ -29,7 +29,17 @@ export default function CourseCreateWizard() {
     price: 0,
     thumbnailUrl: '',
     status: 'DRAFT',
-    subjects: [{ name: '', description: '', sortOrder: 0, mainTeacher: '', assistantTeacher: '' }]
+    subjects: [{ name: '', description: '', sortOrder: 0, mainTeacher: '', assistantTeacher: '' }],
+    startDate: '',
+    endDate: '',
+    durationValue: 0,
+    durationUnit: 'MONTH',
+    daysOfWeek: '',
+    level: 'BEGINNER',
+    maxStudents: 30,
+    language: 'VI',
+    isFeatured: false,
+    discountPrice: 0
   });
 
   useEffect(() => {
@@ -40,20 +50,36 @@ export default function CourseCreateWizard() {
 
         if (isEdit && id) {
           const courseData = await adminCourseService.getCourseDetail(id);
-          setFormData({
-            title: courseData.title,
+          
+          setFormData(prev => ({
+            ...prev, // Cực kỳ quan trọng: Giữ lại các trường mặc định nếu API không trả về
+            title: courseData.title || '',
             description: courseData.description || '',
-            price: courseData.price,
+            price: courseData.price || 0,
             thumbnailUrl: courseData.thumbnailUrl || '',
             status: courseData.status || 'DRAFT',
+            
+            // --- Map thêm các trường thực tế (Format lại Date để hiển thị đúng thẻ input type="date") ---
+            startDate: courseData.startDate ? new Date(courseData.startDate).toISOString().split('T')[0] : '',
+            endDate: courseData.endDate ? new Date(courseData.endDate).toISOString().split('T')[0] : '',
+            durationValue: courseData.durationValue || 0,
+            durationUnit: courseData.durationUnit || 'MONTH',
+            daysOfWeek: courseData.daysOfWeek || '',
+            level: courseData.level || 'BEGINNER',
+            maxStudents: courseData.maxStudents || 30,
+            language: courseData.language || 'VI',
+            isFeatured: courseData.isFeatured || false,
+            discountPrice: courseData.discountPrice || 0,
+            // ----------------------------------------------------------------------------------------
+
             subjects: courseData.subjects?.map((s: any) => ({
               name: s.name,
               description: s.description || '',
               sortOrder: s.sortOrder,
               mainTeacher: s.teachers?.find((t: any) => t.type === 'MAIN')?.teacher?.id || '',
-              assistantTeacher: s.teachers?.find((t: any) => t.type === 'ASSISTANT')?.teacher?.id || ''
+              assistantTeacher: s.teachers?.find((t: any) => t.type === 'TA')?.teacher?.id || ''
             })) || []
-          });
+          }));
         }
       } catch (err) {
         console.error('Failed to load data:', err);
@@ -225,8 +251,108 @@ export default function CourseCreateWizard() {
                     onChange={(e) => setFormData({ ...formData, thumbnailUrl: e.target.value })}
                   />
                 </div>
+                <div>
+                  <label className="block text-sm font-bold text-slate-700 mb-2">Ngày bắt đầu</label>
+                  <input
+                    type="date"
+                    className="w-full p-3 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500"
+                    value={(formData as any).startDate}
+                    onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
+                  />
+                </div>
               </div>
 
+              <div className="grid grid-cols-3 gap-4 mt-4">
+                <div>
+                  <label className="block text-sm font-bold text-slate-700 mb-2">Thời lượng</label>
+                  <div className="flex gap-2">
+                    <input
+                      type="number"
+                      className="w-1/2 p-3 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500"
+                      value={(formData as any).durationValue}
+                      onChange={(e) => setFormData({ ...formData, durationValue: parseInt(e.target.value || '0') })}
+                    />
+                    <select
+                      className="w-1/2 p-3 border border-slate-200 rounded-xl outline-none"
+                      value={(formData as any).durationUnit}
+                      onChange={(e) => setFormData({ ...formData, durationUnit: e.target.value })}
+                    >
+                      <option value="DAY">Ngày</option>
+                      <option value="WEEK">Tuần</option>
+                      <option value="MONTH">Tháng</option>
+                      <option value="HOUR">Giờ</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-bold text-slate-700 mb-2">Ngôn ngữ</label>
+                  <select
+                    className="w-full p-3 border border-slate-200 rounded-xl outline-none"
+                    value={(formData as any).language}
+                    onChange={(e) => setFormData({ ...formData, language: e.target.value })}
+                  >
+                    <option value="VI">Tiếng Việt</option>
+                    <option value="EN">English</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-bold text-slate-700 mb-2">Max học viên</label>
+                  <input
+                    type="number"
+                    className="w-full p-3 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500"
+                    value={(formData as any).maxStudents}
+                    onChange={(e) => setFormData({ ...formData, maxStudents: parseInt(e.target.value || '0') })}
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-3 gap-4 mt-4">
+                <div>
+                  <label className="block text-sm font-bold text-slate-700 mb-2">Level</label>
+                  <select
+                    className="w-full p-3 border border-slate-200 rounded-xl outline-none"
+                    value={(formData as any).level}
+                    onChange={(e) => setFormData({ ...formData, level: e.target.value })}
+                  >
+                    <option value="BEGINNER">Beginner</option>
+                    <option value="INTERMEDIATE">Intermediate</option>
+                    <option value="ADVANCED">Advanced</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-bold text-slate-700 mb-2">Giá giảm ($)</label>
+                  <input
+                    type="number"
+                    className="w-full p-3 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500"
+                    value={(formData as any).discountPrice}
+                    onChange={(e) => setFormData({ ...formData, discountPrice: parseFloat(e.target.value || '0') })}
+                  />
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <label className="block text-sm font-bold text-slate-700 mb-2">Nổi bật</label>
+                  <div className="mt-2">
+                    <input
+                      type="checkbox"
+                      checked={(formData as any).isFeatured}
+                      onChange={(e) => setFormData({ ...formData, isFeatured: e.target.checked })}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-4">
+                <label className="block text-sm font-bold text-slate-700 mb-2">Ngày kết thúc</label>
+                <input
+                  type="date"
+                  className="w-56 p-3 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500"
+                  value={(formData as any).endDate}
+                  onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
+                />
+              </div>
               <div className="mt-4">
                 <label className="block text-sm font-bold text-slate-700 mb-2">Trạng thái</label>
                 <select

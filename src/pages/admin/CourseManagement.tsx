@@ -142,22 +142,24 @@ export default function CourseManagement() {
         </div>
 
         {/* Courses Table */}
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-          <table className="w-full text-left">
+        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-x-auto">
+          <table className="w-full text-left min-w-max">
             <thead className="bg-slate-50 border-b border-slate-200 text-[11px] font-black text-slate-400 uppercase tracking-widest">
               <tr>
-                <th className="px-6 py-4">Tên Khóa học</th>
-                <th className="px-6 py-4">Giá</th>
-                <th className="px-6 py-4">Môn học</th>
-                <th className="px-6 py-4">Trạng thái</th>
-                <th className="px-6 py-4 text-right">Thao tác</th>
+                <th className="px-6 py-4 w-80">Tên Khóa học</th>
+                <th className="px-6 py-4 w-20">Giá</th>
+                <th className="px-6 py-4 w-24">Môn học</th>
+                <th className="px-6 py-4 w-24">Bắt đầu</th>
+                <th className="px-10 py-4 w-16 ">Level</th>
+                <th className="px-6 py-4 w-28">Trạng thái</th>
+                <th className="px-6 py-4 w-40 text-right">Thao tác</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
               {loading ? (
-                <tr><td colSpan={5} className="py-20 text-center"><Loader2 className="animate-spin mx-auto text-indigo-500" /></td></tr>
+                <tr><td colSpan={7} className="py-20 text-center"><Loader2 className="animate-spin mx-auto text-indigo-500" /></td></tr>
               ) : filteredCourses.length === 0 ? (
-                <tr><td colSpan={5} className="py-20 text-center text-slate-500">Không có khóa học nào</td></tr>
+                <tr><td colSpan={7} className="py-20 text-center text-slate-500">Không có khóa học nào</td></tr>
               ) : filteredCourses.map(course => (
                 <tr key={course.id} className="hover:bg-slate-50 transition-colors">
                   <td className="px-6 py-4">
@@ -166,6 +168,7 @@ export default function CourseManagement() {
                         <img src={course.thumbnailUrl} alt={course.title} className="w-10 h-10 rounded object-cover" />
                       )}
                       <div>
+                        {/* Course Title and Description width ngắn lại */}
                         <div className="font-bold text-slate-800">{course.title}</div>
                         <div className="text-xs text-slate-400 line-clamp-1">{course.description || 'Không có mô tả'}</div>
                       </div>
@@ -180,6 +183,16 @@ export default function CourseManagement() {
                     </span>
                   </td>
                   <td className="px-6 py-4">
+                    <span className="text-sm text-slate-700">
+                      {course.startDate ? new Date(course.startDate).toLocaleDateString() : 'N/A'}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4">
+                    <span className="px-2.5 py-1 bg-purple-50 text-purple-600 rounded-full text-xs font-bold">
+                      {course.level}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4">
                     <span className={`px-2.5 py-1 rounded-full text-[10px] font-black border ${
                       course.status === 'PUBLISHED' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' :
                       course.status === 'DRAFT' ? 'bg-amber-50 text-amber-600 border-amber-100' :
@@ -190,7 +203,7 @@ export default function CourseManagement() {
                       {course.status === 'ARCHIVED' && 'Lưu trữ'}
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-right">
+                  <td className="px-6 py-4 text-right whitespace-nowrap">
                     <div className="flex items-center justify-end gap-2">
                       <button 
                         onClick={() => navigate(`/admin/courses/${course.id}/edit`)}

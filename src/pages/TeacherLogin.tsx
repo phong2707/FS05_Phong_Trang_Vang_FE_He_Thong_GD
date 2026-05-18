@@ -35,41 +35,40 @@ const TeacherLogin = () => {
     }
   };
 
- const handleGoogleLogin = async (credentialResponse: any) => {
-  try {
-    setGoogleLoading(true);
-    const idToken = credentialResponse.credential;
-    
-    if (!idToken) {
-      alert("Không thể lấy token từ Google.");
-      return;
-    }
-
-    const response = await authService.googleVerify(idToken);
-    
-    // TRUY XUẤT ĐÚNG CẤU TRÚC: response.data (vì backend trả về {success: true, data: {...}})
-    const result = response?.data; 
-    const validToken = result?.accessToken || result?.token;
-    const userData = result?.user;
-
-    if (response?.success && validToken) {
-      // Kiểm tra quyền Giáo viên (sử dụng userData vừa lấy)
-      if (authService.isTeacher(userData)) { 
-        localStorage.setItem('token', validToken);
-        navigate('/teacher');
-      } else {
-        alert("Bạn không có quyền truy cập vào khu vực Giáo viên.");
+const handleGoogleLogin = async (credentialResponse: any) => {
+    try {
+      setGoogleLoading(true);
+      const idToken = credentialResponse.credential;
+      
+      if (!idToken) {
+        alert("Không thể lấy token từ Google.");
+        return;
       }
-    } else {
-      alert(response?.message || "Đăng nhập thất bại. Vui lòng kiểm tra lại dữ liệu.");
+
+      const response = await authService.googleVerify(idToken);
+      
+      // ✅ SỬA Ở ĐÂY: Lấy trực tiếp token và user từ response, bỏ qua .data
+      const validToken = response?.token;
+      const userData = response?.user;
+
+      if (response?.success && validToken) {
+        // Kiểm tra quyền Giáo viên (sử dụng userData vừa lấy)
+        if (authService.isTeacher(userData)) { 
+          localStorage.setItem('token', validToken);
+          navigate('/teacher');
+        } else {
+          alert("Bạn không có quyền truy cập vào khu vực Giáo viên.");
+        }
+      } else {
+        alert(response?.message || "Đăng nhập thất bại. Vui lòng kiểm tra lại dữ liệu.");
+      }
+    } catch (error: any) {
+      console.error('Google login error:', error);
+      alert("Lỗi kết nối server.");
+    } finally {
+      setGoogleLoading(false);
     }
-  } catch (error: any) {
-    console.error('Google login error:', error);
-    alert("Lỗi kết nối server.");
-  } finally {
-    setGoogleLoading(false);
-  }
-};
+  };
 
   return (
     <div className="min-h-screen flex bg-stone-50" style={{ fontFamily: "'Segoe UI', system-ui, sans-serif" }}>

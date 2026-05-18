@@ -1,9 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import api from '@/api/apiClient';
 export async function login(credentials: { email: string; password: string }) {
-  const res = await api.post('/auth/login', credentials).catch(() => null);
-  return res?.data ?? null; 
-  // Kết quả trả về nên có dạng: { token: string, user: { ..., roles: [{ role: { code: 'TEACHER' } }] } }
+  // ✅ DÙNG ENDPOINT CHO SPA (JWT)
+  const res = await api.post('/v1/auth/login', credentials).catch(() => null);
+  return res?.data ?? null;
+  // Response mong đợi:
+  // {
+  //   success: true,
+  //   token: string,
+  //   user: {
+  //     roles: [{ code: 'TEACHER', ... }]
+  //   }
+  // }
 }
 
 // 🆕 Hàm đăng nhập bằng Google ID Token
@@ -66,7 +74,7 @@ export async function getProfile() {
     return res?.data ?? null;
   } catch (error: any) {
     console.error('Get profile error:', error);
-    return error.response?.data || { success: false, message: "Server không phản hồi" };
+    return error.response?.data || { success: false, message: 'Server không phản hồi' };
   }
 }
 

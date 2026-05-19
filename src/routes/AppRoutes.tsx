@@ -19,11 +19,12 @@ import CourseCreateWizardPage from '@/pages/admin/CourseCreateWizard';
 import TeacherHome from '@/pages/teacher/TeacherHome';
 import ClassGroupsPage from '@/pages/teacher/ClassGroupsPage';
 
-
-import TeacherCoursesPage from '@/pages/teacher/TeacherCoursesPage';
-import CourseDetailPage from '@/pages/teacher/CourseDetailPage';
-
 import ClassGroupStudentsPage from '@/pages/teacher/ClassGroupStudentsPage';
+
+// Public Course Pages
+import CoursesPage from '@/pages/CoursesPage';
+import CourseDetailPage from '@/pages/CourseDetailPage';
+import UpcomingCoursesPage from '@/pages/UpcomingCoursesPage';
 
 
 export default function AppRoutes() {
@@ -32,6 +33,9 @@ export default function AppRoutes() {
       {/* 1. Các trang công khai */}
       <Route path="/" element={<HomePage />} />
       <Route path="/roles" element={<RoleSelectionPage />} />
+      <Route path="/courses" element={<CoursesPage />} />
+      <Route path="/courses/:id" element={<CourseDetailPage />} />
+      <Route path="/upcoming-courses" element={<UpcomingCoursesPage />} />
       
       {/* 2. Luồng Đăng nhập & Quên mật khẩu (Phải đặt TRƯỚC các cụm /*) */}
       <Route path="/login/admin" element={<AdminLogin />} />
@@ -83,8 +87,6 @@ export default function AppRoutes() {
       {/* 6. Not found */}
       <Route path="*" element={<Navigate to="/" replace />} />
 
-      <Route path="/teacher/courses" element={<TeacherCoursesPage />} />
-<Route path="/teacher/courses/:id" element={<CourseDetailPage />} />
     </Routes>
   );
 }

@@ -1,39 +1,32 @@
 import axios from 'axios';
 
-// Đảm bảo URL này khớp với cổng Backend của bạn (thường là 8000)
 const API_BASE_URL = 'http://localhost:8000/api/courses';
+// Nếu bạn không muốn tạo route mới, hãy đổi link gọi API cho khớp với route hiện tại:
+const CATEGORY_API_URL = 'http://localhost:8000/api/categories';
 
 export const courseApi = {
-  // 1. Lấy tất cả khóa học (có hỗ trợ truyền filter)
   getAllCourses: async (params?: { title?: string; level?: string; price?: string; category?: string }) => {
-    try {
-      const response = await axios.get(API_BASE_URL, { params });
-      return response.data;
-    } catch (error) {
-      console.error("Lỗi lấy danh sách khóa học:", error);
-      throw error;
-    }
+    const response = await axios.get(API_BASE_URL, { params });
+    return response.data;
   },
 
-  // 2. Lấy khóa học sắp khai giảng
   getUpcomingCourses: async () => {
-    try {
-      const response = await axios.get(`${API_BASE_URL}/upcoming`);
-      return response.data;
-    } catch (error) {
-      console.error("Lỗi lấy khóa học sắp khai giảng:", error);
-      throw error;
-    }
+    const response = await axios.get(`${API_BASE_URL}/upcoming`);
+    return response.data;
   },
 
-  // 3. Lấy chi tiết khóa học theo ID
   getCourseDetail: async (id: string) => {
+    const response = await axios.get(`${API_BASE_URL}/${id}`);
+    return response.data;
+  },
+
+  getCategories: async () => {
     try {
-      const response = await axios.get(`${API_BASE_URL}/${id}`);
+      const response = await axios.get(CATEGORY_API_URL);
       return response.data;
     } catch (error) {
-      console.error("Lỗi lấy chi tiết khóa học:", error);
-      throw error;
+      console.error("Lỗi lấy danh mục:", error);
+      return [];
     }
   }
 };

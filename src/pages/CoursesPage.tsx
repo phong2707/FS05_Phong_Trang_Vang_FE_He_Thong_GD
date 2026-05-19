@@ -10,16 +10,15 @@ import { courseApi } from '@/api/course.api';
 export default function CoursesPage() {
   const navigate = useNavigate();
   const [courses, setCourses] = useState<any[]>([]);
+  const [categories, setCategories] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  // States cho Lọc
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
   const [selectedLevel, setSelectedLevel] = useState('');
   const [selectedPrice, setSelectedPrice] = useState('all');
 
-  // Hàm xử lý khi bấm nút "Đặt lại"
   const handleReset = () => {
     setSearchTerm('');
     setSelectedCategory('');
@@ -27,13 +26,18 @@ export default function CoursesPage() {
     setSelectedPrice('all');
   };
 
+  // Lấy danh mục ngành học
+  useEffect(() => {
+    courseApi.getCategories().then(setCategories);
+  }, []); 
+
   useEffect(() => {
     const fetchCourses = async () => {
       setLoading(true);
       try {
         const data = await courseApi.getAllCourses({
           title: searchTerm,
-          category: selectedCategory,
+          category: selectedCategory || undefined,
           level: selectedLevel,
           price: selectedPrice === 'all' ? '' : selectedPrice,
         });
@@ -93,16 +97,19 @@ export default function CoursesPage() {
               <div className="mb-5">
                 <label className="text-sm font-medium text-slate-600 block mb-2">Danh mục</label>
                 <select
-                  className="w-full p-2 border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-[#0f766e] focus:border-transparent transition bg-white"
-                  value={selectedCategory}
-                  onChange={(e) => setSelectedCategory(e.target.value)}
-                >
-                  <option value="">Tất cả danh mục</option>
-                  <option value="FRONTEND">Lập trình Frontend</option>
-                  <option value="BACKEND">Lập trình Backend</option>
-                  <option value="TESTER">Kiểm thử (Tester/QA)</option>
-                  <option value="MOBILE">Lập trình Mobile</option>
-                </select>
+  value={selectedCategory}
+  onChange={(e) => setSelectedCategory(e.target.value)}
+  className="w-full px-4 py-2 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0f766e]" 
+  /* 👆 Bạn cứ GIỮ NGUYÊN className cũ của bạn ở trên nhé */
+>
+  {/* ✅ 3. CHỈ THAY ĐỔI PHẦN OPTION NÀY */}
+  <option value="">Tất cả chuyên ngành</option>
+  {categories.map((cat) => (
+    <option key={cat.id} value={cat.id}>
+      {cat.iconUrl ? `${cat.iconUrl} ` : ''}{cat.name} 
+    </option>
+  ))}
+</select>
               </div>
  
               {/* Lọc Trình độ */}

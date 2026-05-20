@@ -17,7 +17,8 @@ import CourseCreateWizardPage from '@/pages/admin/CourseCreateWizard';
 
 
 import TeacherSubject from '@/pages/teacher/TeacherSubject';
-import ClassGroupsPage from '@/pages/teacher/ClassGroupsPage';
+import SubjectDetailPage from '@/pages/teacher/SubjectDetailPage';
+import SubjectFeaturePlaceholderPage from '@/pages/teacher/SubjectFeaturePlaceholderPage';
 
 import ClassGroupStudentsPage from '@/pages/teacher/ClassGroupStudentsPage';
 
@@ -68,9 +69,34 @@ export default function AppRoutes() {
       {/* 4. Dashboard Teacher */}
       <Route path="/teacher" element={<TeacherDashboard />} />
       <Route path="/teacher/subjects" element={<TeacherSubject />} />
+      <Route path="/teacher/subjects/:subjectId" element={<SubjectDetailPage />} />
+      <Route
+        path="/teacher/subjects/:subjectId/documents"
+        element={<SubjectFeaturePlaceholderPage title="Tài liệu" />}
+      />
+      <Route
+        path="/teacher/subjects/:subjectId/attendance"
+        element={<SubjectFeaturePlaceholderPage title="Điểm danh" />}
+      />
+      <Route
+        path="/teacher/subjects/:subjectId/students"
+        element={<SubjectFeaturePlaceholderPage title="Danh sách sinh viên" />}
+      />
+      <Route
+        path="/teacher/subjects/:subjectId/exams"
+        element={<SubjectFeaturePlaceholderPage title="Bài tập và bài thi" />}
+      />
+      <Route
+        path="/teacher/subjects/:subjectId/question-bank"
+        element={<SubjectFeaturePlaceholderPage title="Ngân hàng câu hỏi" />}
+      />
+      <Route
+        path="/teacher/subjects/:subjectId/grades"
+        element={<SubjectFeaturePlaceholderPage title="Quản lý điểm theo môn" />}
+      />
       <Route
         path="/teacher/subjects/:subjectId/groups"
-        element={<ClassGroupsPage />}
+        element={<SubjectFeaturePlaceholderPage title="Nhóm lớp học phần" />}
       />
       <Route
         path="/teacher/class-groups/:classGroupId/students"

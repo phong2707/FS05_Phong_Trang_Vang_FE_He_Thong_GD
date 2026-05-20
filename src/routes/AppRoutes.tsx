@@ -16,7 +16,7 @@ import CourseManagementPage from '@/pages/admin/CourseManagement';
 import CourseCreateWizardPage from '@/pages/admin/CourseCreateWizard';
 
 
-import TeacherHome from '@/pages/teacher/TeacherHome';
+import TeacherSubject from '@/pages/teacher/TeacherSubject';
 import ClassGroupsPage from '@/pages/teacher/ClassGroupsPage';
 
 import ClassGroupStudentsPage from '@/pages/teacher/ClassGroupStudentsPage';
@@ -65,21 +65,17 @@ export default function AppRoutes() {
       <Route path="/admin/courses/create" element={<CourseCreateWizardPage />} />
       <Route path="/admin/courses/:id/edit" element={<CourseCreateWizardPage />} />
 
-      {/* 4. Dashboard Teacher (nested routes) */}
-      <Route path="/teacher/*" element={<TeacherDashboard />}>
-        <Route index element={<TeacherHome />} />
-        <Route
-          path="subjects/:subjectId/groups"
-          element={<ClassGroupsPage />}
-        />
-        
-{/* ✅ Sinh viên trong nhóm lớp */}
-  <Route
-    path="class-groups/:classGroupId/students"
-    element={<ClassGroupStudentsPage />}
-  />
-
-      </Route>
+      {/* 4. Dashboard Teacher */}
+      <Route path="/teacher" element={<TeacherDashboard />} />
+      <Route path="/teacher/subjects" element={<TeacherSubject />} />
+      <Route
+        path="/teacher/subjects/:subjectId/groups"
+        element={<ClassGroupsPage />}
+      />
+      <Route
+        path="/teacher/class-groups/:classGroupId/students"
+        element={<ClassGroupStudentsPage />}
+      />
 
       {/* 5. Dashboard Student */}
       <Route path="/student/*" element={<StudentDashboard />} />

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BookOpen, ChevronRight, Inbox } from 'lucide-react';
 import apiClient from '@/api/apiClient';
+import TeacherDashboardLayout from '@/components/teacher/TeacherDashboardLayout';
 
 interface SubjectItem {
   subjectId: string;
@@ -21,6 +22,24 @@ interface SubjectApiResponseItem {
   description?: string | null;
   sortOrder?: number;
   createdAt?: string;
+  teachers?: Array<{
+    type: 'MAIN' | 'TA';
+  }>;
+  classGroups?: Array<{
+    id: string;
+    name: string;
+    status?: 'ACTIVE' | 'INACTIVE';
+    startDate?: string | null;
+    endDate?: string | null;
+    groupUsers?: Array<{
+      userId: string;
+    }>;
+    schedules?: Array<{
+      startAt: string;
+      endAt: string;
+      dayOfWeek?: number | null;
+    }>;
+  }>;
   course?: {
     id: string;
     title: string;
@@ -36,20 +55,36 @@ export default function TeacherSubject() {
   useEffect(() => {
     const fetchSubjects = async () => {
       try {
-        const response = await apiClient.get('/v1/subjects');
+        const response = await apiClient.get('/v1/teacher/subjects');
         const apiSubjects: SubjectApiResponseItem[] = response?.data?.data ?? [];
 
-        const mappedSubjects: SubjectItem[] = apiSubjects.map((item) => ({
-          subjectId: item.id,
-          subjectName: item.name,
-          subjectCode: undefined,
-          classGroupId: '',
-          classGroupName: item.course?.title ?? 'Chưa có lớp',
-          studentCount: 0,
-          schedule: 'Chưa cập nhật',
-          status: 'ACTIVE',
-          teacherType: 'MAIN',
-        }));
+        const mappedSubjects: SubjectItem[] = apiSubjects.map((item) => {
+          const firstClass = item.classGroups?.[0];
+          const firstSchedule = firstClass?.schedules?.[0];
+          const studentCount = firstClass?.groupUsers?.length ?? 0;
+
+          const schedule = firstSchedule?.startAt
+            ? new Date(firstSchedule.startAt).toLocaleString('vi-VN', {
+                hour: '2-digit',
+                minute: '2-digit',
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+              })
+            : 'Chưa cập nhật';
+
+          return {
+            subjectId: item.id,
+            subjectName: item.name,
+            subjectCode: undefined,
+            classGroupId: firstClass?.id ?? '',
+            classGroupName: firstClass?.name ?? 'Chưa có lớp',
+            studentCount,
+            schedule,
+            status: (firstClass?.status as 'ACTIVE' | 'INACTIVE') ?? 'ACTIVE',
+            teacherType: item.teachers?.[0]?.type ?? 'MAIN',
+          };
+        });
 
         setSubjects(mappedSubjects);
       } catch (error) {
@@ -66,7 +101,7 @@ export default function TeacherSubject() {
   const displayedSubjects = useMemo(() => subjects, [subjects]);
 
   return (
-    <div className="space-y-6">
+    <TeacherDashboardLayout mainClassName="flex-1 overflow-auto bg-stone-50 p-6 space-y-6">
       <header>
         <h1 className="text-2xl font-bold text-gray-900">Môn được phân công</h1>
         <p className="text-sm text-gray-500 mt-1">
@@ -138,6 +173,6 @@ export default function TeacherSubject() {
           </div>
         )}
       </section>
-    </div>
+    </TeacherDashboardLayout>
   );
 }

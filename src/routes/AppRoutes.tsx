@@ -19,6 +19,7 @@ import CourseCreateWizardPage from '@/pages/admin/CourseCreateWizard';
 import TeacherSubject from '@/pages/teacher/TeacherSubject';
 import SubjectDetailPage from '@/pages/teacher/SubjectDetailPage';
 import SubjectFeaturePlaceholderPage from '@/pages/teacher/SubjectFeaturePlaceholderPage';
+import AttendancePage from '@/pages/teacher/AttendancePage';
 
 import ClassGroupStudentsPage from '@/pages/teacher/ClassGroupStudentsPage';
 
@@ -76,7 +77,7 @@ export default function AppRoutes() {
       />
       <Route
         path="/teacher/subjects/:subjectId/attendance"
-        element={<SubjectFeaturePlaceholderPage title="Điểm danh" />}
+        element={<AttendancePage />}
       />
       <Route
         path="/teacher/subjects/:subjectId/students"

@@ -11,23 +11,23 @@ import ForgotPasswordForm from '@/components/ForgotPasswordForm';
 import StudentLogin from '@/pages/StudentLogin';
 import AdminLogin from '@/pages/AdminLogin';
 import UserManagementPage from '@/pages/admin/UserManagement';
-import RoleManagementPage from '@/pages/admin/RoleManagement'; // Import mới
+import RoleManagementPage from '@/pages/admin/RoleManagement';
 import CourseManagementPage from '@/pages/admin/CourseManagement';
 import CourseCreateWizardPage from '@/pages/admin/CourseCreateWizard';
-
 
 import TeacherSubject from '@/pages/teacher/TeacherSubject';
 import SubjectDetailPage from '@/pages/teacher/SubjectDetailPage';
 import SubjectFeaturePlaceholderPage from '@/pages/teacher/SubjectFeaturePlaceholderPage';
 import AttendancePage from '@/pages/teacher/AttendancePage';
-
 import ClassGroupStudentsPage from '@/pages/teacher/ClassGroupStudentsPage';
+
+// ✅ Bổ sung import trang Quản lý tài liệu môn học
+import SubjectResourcesPage from '@/pages/teacher/SubjectResourcesPage';
 
 // Public Course Pages
 import CoursesPage from '@/pages/CoursesPage';
 import CourseDetailPage from '@/pages/CourseDetailPage';
 import UpcomingCoursesPage from '@/pages/UpcomingCoursesPage';
-
 
 export default function AppRoutes() {
   return (
@@ -59,7 +59,7 @@ export default function AppRoutes() {
       <Route path="/profile" element={<ProfilePage />} />
   
       {/* 4. Các cụm Dashboard dành cho từng vai trò */}
-      {/* Dấu /* cho phép các trang con bên trong Dashboard hoạt động */}
+      {/* Dashboard Admin */}
       <Route path="/admin/*" element={<AdminDashboard />} />
       <Route path="/admin/users" element={<UserManagementPage />} />
       <Route path="/admin/roles" element={<RoleManagementPage />} />
@@ -67,14 +67,17 @@ export default function AppRoutes() {
       <Route path="/admin/courses/create" element={<CourseCreateWizardPage />} />
       <Route path="/admin/courses/:id/edit" element={<CourseCreateWizardPage />} />
 
-      {/* 4. Dashboard Teacher */}
+      {/* Dashboard Teacher */}
       <Route path="/teacher" element={<TeacherDashboard />} />
       <Route path="/teacher/subjects" element={<TeacherSubject />} />
       <Route path="/teacher/subjects/:subjectId" element={<SubjectDetailPage />} />
+      
+      {/* ✅ Thay thế Placeholder bằng Component Quản lý tài liệu thật (đã đổi path thành resources cho chuẩn) */}
       <Route
-        path="/teacher/subjects/:subjectId/documents"
-        element={<SubjectFeaturePlaceholderPage title="Tài liệu" />}
+        path="/teacher/subjects/:subjectId/resources"
+        element={<SubjectResourcesPage />}
       />
+      
       <Route
         path="/teacher/subjects/:subjectId/attendance"
         element={<AttendancePage />}
@@ -109,7 +112,6 @@ export default function AppRoutes() {
 
       {/* 6. Not found */}
       <Route path="*" element={<Navigate to="/" replace />} />
-
     </Routes>
   );
 }

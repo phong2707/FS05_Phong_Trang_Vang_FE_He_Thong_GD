@@ -28,6 +28,7 @@ import SubjectResourcesPage from '@/pages/teacher/SubjectResourcesPage';
 import CoursesPage from '@/pages/CoursesPage';
 import CourseDetailPage from '@/pages/CourseDetailPage';
 import UpcomingCoursesPage from '@/pages/UpcomingCoursesPage';
+import SubjectStudentsPage from '@/pages/teacher/SubjectStudentsPage';
 
 export default function AppRoutes() {
   return (
@@ -84,7 +85,7 @@ export default function AppRoutes() {
       />
       <Route
         path="/teacher/subjects/:subjectId/students"
-        element={<SubjectFeaturePlaceholderPage title="Danh sách sinh viên" />}
+        element={<SubjectStudentsPage />}
       />
       <Route
         path="/teacher/subjects/:subjectId/exams"

@@ -111,7 +111,7 @@ export default function SubjectDetailPage() {
       {
         title: 'Tài liệu',
         description: 'Quản lý giáo trình, slide, tài liệu học tập của môn học',
-        path: `/teacher/subjects/${subjectId}/documents`,
+        path: `/teacher/subjects/${subjectId}/resources`,
         icon: FileText,
       },
       {

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/set-state-in-effect */
-import React, { useEffect, useState } from 'react';
-import { Shield, Plus, Lock, CheckCircle, ChevronRight, Loader2, X } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Shield, Plus, Lock, CheckCircle, Loader2, X, Trash2, Edit } from 'lucide-react';
 import { adminUserService ,type Feature, type Role } from '@/services/adminUserService';
 import SidebarLayout from '@/layouts/SidebarLayout';
 import DashboardHeader from '@/components/DashboardHeader';
@@ -12,6 +12,8 @@ export default function RoleManagement() {
   const [features, setFeatures] = useState<Feature[]>([]);
   const [loading, setLoading] = useState(true);
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [selectedRole, setSelectedRole] = useState<Role | null>(null);
 
   const loadData = async () => {
     setLoading(true);
@@ -23,6 +25,23 @@ export default function RoleManagement() {
     setRoles(rolesRes);
     setFeatures(featuresRes.features || featuresRes); 
     setLoading(false);
+  };
+
+  const handleEditRole = (role: Role) => {
+    setSelectedRole(role);
+    setShowEditModal(true);
+  };
+
+  const handleDeleteRole = async (roleId: string) => {
+    if (window.confirm('Bạn có chắc chắn muốn xoá vai trò này?')) {
+      try {
+        await adminUserService.deleteRole(roleId);
+        alert('Xoá vai trò thành công');
+        loadData();
+      } catch (err) {
+        alert('Xoá vai trò thất bại: ' + (err as any).message);
+      }
+    }
   };
 
   useEffect(() => { loadData(); }, []);
@@ -52,10 +71,16 @@ export default function RoleManagement() {
                 {role.code}
               </code>
               <p className="text-sm text-slate-500 mt-3 line-clamp-2">{role.description || 'Không có mô tả'}</p>
-              <div className="mt-6 pt-6 border-t border-slate-50 flex justify-between items-center">
-                <span className="text-xs font-bold text-slate-400">Đang được sử dụng</span>
-                <button className="text-indigo-600 font-bold text-sm flex items-center gap-1 hover:underline">
-                  Chi tiết <ChevronRight size={14} />
+              <div className="mt-6 pt-6 border-t border-slate-50 flex justify-between items-center gap-2">
+                <button 
+                  onClick={() => handleEditRole(role)}
+                  className="flex-1 text-indigo-600 font-bold text-sm flex items-center justify-center gap-1 hover:bg-indigo-50 py-2 rounded-lg transition-colors">
+                  <Edit size={14} /> Sửa
+                </button>
+                <button 
+                  onClick={() => handleDeleteRole(role.id)}
+                  className="flex-1 text-red-600 font-bold text-sm flex items-center justify-center gap-1 hover:bg-red-50 py-2 rounded-lg transition-colors">
+                  <Trash2 size={14} /> Xoá
                 </button>
               </div>
             </div>
@@ -67,6 +92,14 @@ export default function RoleManagement() {
         <CreateRoleModal 
           features={features} 
           onClose={() => { setShowCreateModal(false); loadData(); }} 
+        />
+      )}
+
+      {showEditModal && selectedRole && (
+        <EditRoleModal 
+          role={selectedRole}
+          features={features}
+          onClose={() => { setShowEditModal(false); setSelectedRole(null); loadData(); }}
         />
       )}
     </SidebarLayout>
@@ -165,6 +198,144 @@ function CreateRoleModal({ features, onClose }: { features: any[], onClose: () =
             className="bg-indigo-600 text-white px-10 py-2.5 rounded-xl font-bold shadow-lg shadow-indigo-100 disabled:opacity-50"
           >
             {saving ? 'Đang khởi tạo...' : 'Xác nhận tạo Vai trò'}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// --- MODAL CHỈNH SỬA ROLE & GÁN QUYỀN ---
+function EditRoleModal({ role, features, onClose }: { role: Role, features: any[], onClose: () => void }) {
+  const [formData, setFormData] = useState({ code: '', name: '', description: '' });
+  const [selectedPerms, setSelectedPerms] = useState<string[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    const fetchRoleDetails = async () => {
+      try {
+        const data = await adminUserService.getRoleDetails(role.id);
+        setFormData({
+          code: data.code,
+          name: data.name,
+          description: data.description || ''
+        });
+        // Extract permission IDs
+        const permIds = data.permissions?.map((rtp: any) => rtp.permission.id) || [];
+        setSelectedPerms(permIds);
+      } catch (err) {
+        console.error('Failed to fetch role details:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchRoleDetails();
+  }, [role.id]);
+
+  const togglePerm = (id: string) => {
+    setSelectedPerms(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
+  };
+
+  const handleUpdate = async () => {
+    if (!formData.code || !formData.name) return alert('Vui lòng nhập đủ thông tin');
+    setSaving(true);
+    try {
+      await adminUserService.updateRole(role.id, { ...formData, permissionIds: selectedPerms });
+      alert('Cập nhật vai trò thành công');
+      onClose();
+    } catch (err: any) {
+      alert('Cập nhật thất bại: ' + (err.message || 'Lỗi không xác định'));
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm">
+        <Loader2 className="animate-spin text-white" size={32} />
+      </div>
+    );
+  }
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
+      <div className="bg-white rounded-3xl shadow-2xl w-full max-w-5xl max-h-[90vh] flex flex-col overflow-hidden animate-in zoom-in-95 duration-200">
+        <div className="p-6 border-b bg-slate-50 flex justify-between items-center">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-indigo-600 text-white rounded-xl flex items-center justify-center"><Edit size={20} /></div>
+            <h2 className="text-xl font-bold text-slate-800">Chỉnh sửa Vai trò & Quyền hạn</h2>
+          </div>
+          <button onClick={onClose} className="p-2 hover:bg-slate-200 rounded-full"><X size={20} /></button>
+        </div>
+
+        <div className="flex-1 overflow-auto p-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Thông tin cơ bản */}
+          <div className="space-y-5">
+            <h3 className="font-bold text-slate-800 flex items-center gap-2">
+              <CheckCircle size={16} className="text-indigo-600" /> Thông tin cơ bản
+            </h3>
+            <input 
+              placeholder="Mã vai trò (VD: SUPER_ADMIN)" 
+              value={formData.code}
+              className="w-full p-3 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500 uppercase font-bold text-sm"
+              onChange={e => setFormData({...formData, code: e.target.value.toUpperCase()})}
+            />
+            <input 
+              placeholder="Tên vai trò hiển thị" 
+              value={formData.name}
+              className="w-full p-3 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500"
+              onChange={e => setFormData({...formData, name: e.target.value})}
+            />
+            <textarea 
+              placeholder="Mô tả vai trò..." 
+              value={formData.description}
+              rows={4}
+              className="w-full p-3 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500 text-sm"
+              onChange={e => setFormData({...formData, description: e.target.value})}
+            />
+          </div>
+
+          {/* Ma trận quyền hạn */}
+          <div className="lg:col-span-2 space-y-6">
+            <h3 className="font-bold text-slate-800 flex items-center gap-2">
+              <Shield size={16} className="text-indigo-600" /> Ma trận Quyền hạn (Permissions)
+            </h3>
+            <div className="grid grid-cols-1 gap-4">
+              {features.map((feat: any) => (
+                <div key={feat.id} className="border border-slate-100 rounded-2xl overflow-hidden bg-slate-50/50">
+                  <div className="px-4 py-3 bg-white border-b border-slate-100 font-bold text-slate-700 text-sm flex justify-between items-center">
+                    {feat.name}
+                    <span className="text-[10px] bg-slate-100 px-2 py-0.5 rounded uppercase">{feat.code}</span>
+                  </div>
+                  <div className="p-4 flex flex-wrap gap-4">
+                    {feat.permissions?.map((p: any) => (
+                      <label key={p.id} className="flex items-center gap-2 cursor-pointer group">
+                        <input 
+                          type="checkbox" 
+                          checked={selectedPerms.includes(p.id)}
+                          onChange={() => togglePerm(p.id)}
+                          className="w-4 h-4 rounded text-indigo-600 border-slate-300 focus:ring-indigo-500" 
+                        />
+                        <span className="text-sm text-slate-600 group-hover:text-indigo-600 transition-colors">{p.name}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="p-6 border-t bg-slate-50 text-right">
+          <button onClick={onClose} className="px-6 py-2.5 font-bold text-slate-400 hover:text-slate-600 mr-4">Hủy</button>
+          <button 
+            onClick={handleUpdate}
+            disabled={saving}
+            className="bg-indigo-600 text-white px-10 py-2.5 rounded-xl font-bold shadow-lg shadow-indigo-100 disabled:opacity-50"
+          >
+            {saving ? 'Đang lưu...' : 'Lưu thay đổi'}
           </button>
         </div>
       </div>

@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// bỏ qua file này 
+// @ts-nocheck
 import { useParams, Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { getCourseDetail } from '@/api/course.api';

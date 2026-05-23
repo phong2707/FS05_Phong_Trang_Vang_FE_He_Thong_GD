@@ -62,5 +62,17 @@ export const adminUserService = {
   createRole: async (data: any) => {
     const res = await api.post('/admin/roles', data);
     return res.data;
+  },
+  getRoleDetails: async (id: string) => {
+    const res = await api.get(`/admin/roles/${id}`);
+    return res.data;
+  },
+  updateRole: async (id: string, data: any) => {
+    const res = await api.put(`/admin/roles/${id}`, data);
+    return res.data;
+  },
+  deleteRole: async (id: string) => {
+    const res = await api.delete(`/admin/roles/${id}`);
+    return res.data;
   }
 };

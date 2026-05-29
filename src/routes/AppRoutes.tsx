@@ -44,6 +44,8 @@ import CoursesPage from '@/pages/CoursesPage';
 import CourseDetailPage from '@/pages/CourseDetailPage';
 import UpcomingCoursesPage from '@/pages/UpcomingCoursesPage';
 import SubjectStudentsPage from '@/pages/teacher/SubjectStudentsPage';
+import SubjectTestsPage from '@/pages/teacher/SubjectTestsPage';
+import SubjectQuestionBankPage from '@/pages/teacher/SubjectQuestionBankPage';
 
 >>>>>>> 19d911aa3e73ae6304c26709ca4a9f52f79839ab
 export default function AppRoutes() {
@@ -125,11 +127,11 @@ export default function AppRoutes() {
       />
       <Route
         path="/teacher/subjects/:subjectId/exams"
-        element={<SubjectFeaturePlaceholderPage title="Bài tập và bài thi" />}
+        element={<SubjectTestsPage />}
       />
       <Route
         path="/teacher/subjects/:subjectId/question-bank"
-        element={<SubjectFeaturePlaceholderPage title="Ngân hàng câu hỏi" />}
+        element={<SubjectQuestionBankPage />}
       />
       <Route
         path="/teacher/subjects/:subjectId/grades"

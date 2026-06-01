@@ -10,3 +10,6 @@ export { Header } from "./Header";
 export { HeroSection } from "./HeroSection";
 export { StudentSchedule } from "./StudentSchedule";
 export { StudentMaterials } from "./StudentMaterials";
+export { StudentGrades } from "./StudentGrades";
+export { StudentAttendances } from "./StudentAttendances";
+export { StudentQuiz, StudentAssignment } from "./StudentQuiz";

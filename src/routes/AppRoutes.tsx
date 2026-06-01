@@ -15,7 +15,14 @@ import RoleManagementPage from "@/pages/admin/RoleManagement"; // Import mới
 import CourseManagementPage from "@/pages/admin/CourseManagement";
 import CourseCreateWizardPage from "@/pages/admin/CourseCreateWizard";
 
-import { StudentSchedule, StudentMaterials } from "@/components";
+import {
+  StudentSchedule,
+  StudentMaterials,
+  StudentGrades,
+  StudentAttendances,
+  StudentQuiz,
+  StudentAssignment,
+} from "@/components";
 
 import TeacherHome from "@/pages/teacher/TeacherHome";
 import ClassGroupsPage from "@/pages/teacher/ClassGroupsPage";
@@ -85,6 +92,10 @@ export default function AppRoutes() {
       <Route path="/student/*" element={<StudentDashboard />}>
         <Route path="schedule" element={<StudentSchedule />} />
         <Route path="materials" element={<StudentMaterials />} />
+        <Route path="grades" element={<StudentGrades />} />
+        <Route path="attendances" element={<StudentAttendances />} />
+        <Route path="quiz/:testId" element={<StudentQuiz />} />
+        <Route path="assignment/:testId" element={<StudentAssignment />} />
       </Route>
 
       {/* 6. Not found */}

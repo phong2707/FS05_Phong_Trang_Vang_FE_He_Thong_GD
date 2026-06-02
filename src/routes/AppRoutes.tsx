@@ -1,53 +1,43 @@
 // frontend/src/routes/AppRoutes.tsx
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate } from "react-router-dom";
 
-import HomePage from '@/pages/HomePage';
-import RoleSelectionPage from '@/pages/RoleSelectionPage';
+import HomePage from "@/pages/HomePage";
+import RoleSelectionPage from "@/pages/RoleSelectionPage";
 
-import AdminDashboard from '@/pages/AdminDashboard';
-import TeacherDashboard from '@/pages/TeacherDashboard';
-import StudentDashboard from '@/pages/StudentDashboard';
+import AdminDashboard from "@/pages/AdminDashboard";
+import TeacherDashboard from "@/pages/TeacherDashboard";
+import StudentDashboard from "@/pages/StudentDashboard";
 
-import TeacherLogin from '@/pages/TeacherLogin';
-import StudentLogin from '@/pages/StudentLogin';
-import AdminLogin from '@/pages/AdminLogin';
-import UserManagementPage from '@/pages/admin/UserManagement';
-<<<<<<< HEAD
-import RoleManagementPage from '@/pages/admin/RoleManagement'; // Import mới
+import TeacherLogin from "@/pages/TeacherLogin";
+import StudentLogin from "@/pages/StudentLogin";
+import AdminLogin from "@/pages/AdminLogin";
+import UserManagementPage from "@/pages/admin/UserManagement";
+import RoleManagementPage from "@/pages/admin/RoleManagement";
+import CourseManagementPage from "@/pages/admin/CourseManagement";
+import CourseCreateWizardPage from "@/pages/admin/CourseCreateWizard";
 
-
-import ProfilePage from '@/pages/ProfilePage';
-import ForgotPasswordForm from '@/components/ForgotPasswordForm';
-
-import TeacherHome from '@/pages/teacher/TeacherHome';
-import ClassGroupsPage from '@/pages/teacher/ClassGroupsPage';
-import ClassGroupStudentsPage from '@/pages/teacher/ClassGroupStudentsPage';
-import TeacherCoursesPage from '@/pages/teacher/TeacherCoursesPage';
-import CourseDetailPage from '@/pages/teacher/CourseDetailPage';
-
-=======
-import RoleManagementPage from '@/pages/admin/RoleManagement';
-import CourseManagementPage from '@/pages/admin/CourseManagement';
-import CourseCreateWizardPage from '@/pages/admin/CourseCreateWizard';
-
-import TeacherSubject from '@/pages/teacher/TeacherSubject';
-import SubjectDetailPage from '@/pages/teacher/SubjectDetailPage';
-import SubjectFeaturePlaceholderPage from '@/pages/teacher/SubjectFeaturePlaceholderPage';
-import AttendancePage from '@/pages/teacher/AttendancePage';
-import ClassGroupStudentsPage from '@/pages/teacher/ClassGroupStudentsPage';
+import TeacherSubject from "@/pages/teacher/TeacherSubject";
+import SubjectDetailPage from "@/pages/teacher/SubjectDetailPage";
+import SubjectFeaturePlaceholderPage from "@/pages/teacher/SubjectFeaturePlaceholderPage";
+import AttendancePage from "@/pages/teacher/AttendancePage";
+import ClassGroupStudentsPage from "@/pages/teacher/ClassGroupStudentsPage";
 
 // ✅ Bổ sung import trang Quản lý tài liệu môn học
-import SubjectResourcesPage from '@/pages/teacher/SubjectResourcesPage';
+import SubjectResourcesPage from "@/pages/teacher/SubjectResourcesPage";
 
 // Public Course Pages
-import CoursesPage from '@/pages/CoursesPage';
-import CourseDetailPage from '@/pages/CourseDetailPage';
-import UpcomingCoursesPage from '@/pages/UpcomingCoursesPage';
-import SubjectStudentsPage from '@/pages/teacher/SubjectStudentsPage';
-import SubjectTestsPage from '@/pages/teacher/SubjectTestsPage';
-import SubjectQuestionBankPage from '@/pages/teacher/SubjectQuestionBankPage';
+import CoursesPage from "@/pages/CoursesPage";
+import CourseDetailPage from "@/pages/CourseDetailPage";
+import UpcomingCoursesPage from "@/pages/UpcomingCoursesPage";
+import SubjectStudentsPage from "@/pages/teacher/SubjectStudentsPage";
+import SubjectTestsPage from "@/pages/teacher/SubjectTestsPage";
+import SubjectQuestionBankPage from "@/pages/teacher/SubjectQuestionBankPage";
+import QuestionCreatePage from "@/pages/teacher/QuestionCreatePage";
+import QuestionDetailPage from "@/pages/teacher/QuestionDetailPage";
 
->>>>>>> 19d911aa3e73ae6304c26709ca4a9f52f79839ab
+import ForgotPasswordForm from "@/components/ForgotPasswordForm";
+import ProfilePage from "@/pages/ProfilePage";
+
 export default function AppRoutes() {
   return (
     <Routes>
@@ -57,7 +47,7 @@ export default function AppRoutes() {
       <Route path="/courses" element={<CoursesPage />} />
       <Route path="/courses/:id" element={<CourseDetailPage />} />
       <Route path="/upcoming-courses" element={<UpcomingCoursesPage />} />
-      
+
       {/* 2. Luồng Đăng nhập & Quên mật khẩu (Phải đặt TRƯỚC các cụm /*) */}
       <Route path="/login/admin" element={<AdminLogin />} />
       <Route path="/login/teacher" element={<TeacherLogin />} />
@@ -77,46 +67,36 @@ export default function AppRoutes() {
 
       {/* 3. Profile */}
       <Route path="/profile" element={<ProfilePage />} />
-  
+
       {/* 4. Các cụm Dashboard dành cho từng vai trò */}
       {/* Dashboard Admin */}
       <Route path="/admin/*" element={<AdminDashboard />} />
       <Route path="/admin/users" element={<UserManagementPage />} />
       <Route path="/admin/roles" element={<RoleManagementPage />} />
       <Route path="/admin/courses" element={<CourseManagementPage />} />
-      <Route path="/admin/courses/create" element={<CourseCreateWizardPage />} />
-      <Route path="/admin/courses/:id/edit" element={<CourseCreateWizardPage />} />
+      <Route
+        path="/admin/courses/create"
+        element={<CourseCreateWizardPage />}
+      />
+      <Route
+        path="/admin/courses/:id/edit"
+        element={<CourseCreateWizardPage />}
+      />
 
-<<<<<<< HEAD
-      {/* 5. Teacher Dashboard (nested routes) */}
-      <Route path="/teacher/*" element={<TeacherDashboard />}>
-        <Route index element={<TeacherHome />} />
-
-        <Route
-          path="subjects/:subjectId/groups"
-          element={<ClassGroupsPage />}
-        />
-
-        <Route
-          path="class-groups/:classGroupId/students"
-          element={<ClassGroupStudentsPage />}
-        />
-
-        <Route path="courses" element={<TeacherCoursesPage />} />
-        <Route path="courses/:id" element={<CourseDetailPage />} />
-      </Route>
-=======
       {/* Dashboard Teacher */}
       <Route path="/teacher" element={<TeacherDashboard />} />
       <Route path="/teacher/subjects" element={<TeacherSubject />} />
-      <Route path="/teacher/subjects/:subjectId" element={<SubjectDetailPage />} />
-      
+      <Route
+        path="/teacher/subjects/:subjectId"
+        element={<SubjectDetailPage />}
+      />
+
       {/* ✅ Thay thế Placeholder bằng Component Quản lý tài liệu thật (đã đổi path thành resources cho chuẩn) */}
       <Route
         path="/teacher/subjects/:subjectId/resources"
         element={<SubjectResourcesPage />}
       />
-      
+
       <Route
         path="/teacher/subjects/:subjectId/attendance"
         element={<AttendancePage />}
@@ -134,8 +114,18 @@ export default function AppRoutes() {
         element={<SubjectQuestionBankPage />}
       />
       <Route
+        path="/teacher/subjects/:subjectId/questions/create"
+        element={<QuestionCreatePage />}
+      />
+      <Route
+        path="/teacher/subjects/:subjectId/questions/:questionId/edit"
+        element={<QuestionCreatePage />}
+      />
+      <Route
         path="/teacher/subjects/:subjectId/grades"
-        element={<SubjectFeaturePlaceholderPage title="Quản lý điểm theo môn" />}
+        element={
+          <SubjectFeaturePlaceholderPage title="Quản lý điểm theo môn" />
+        }
       />
       <Route
         path="/teacher/subjects/:subjectId/groups"
@@ -145,7 +135,10 @@ export default function AppRoutes() {
         path="/teacher/class-groups/:classGroupId/students"
         element={<ClassGroupStudentsPage />}
       />
->>>>>>> 19d911aa3e73ae6304c26709ca4a9f52f79839ab
+      <Route 
+        path="/teacher/questions/:id" 
+        element={<QuestionDetailPage />} 
+      />
 
       {/* 6. Student Dashboard */}
       <Route path="/student/*" element={<StudentDashboard />} />

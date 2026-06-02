@@ -1,37 +1,36 @@
 // frontend/src/routes/AppRoutes.tsx
-import { Routes, Route, Navigate } from 'react-router-dom';
-import HomePage from '@/pages/HomePage';
-import RoleSelectionPage from '@/pages/RoleSelectionPage';
-import AdminDashboard from '@/pages/AdminDashboard';
-import TeacherDashboard from '@/pages/TeacherDashboard';
-import StudentDashboard from '@/pages/StudentDashboard';
-import TeacherLogin from '@/pages/TeacherLogin';
-import ProfilePage from '@/pages/ProfilePage';
-import ForgotPasswordForm from '@/components/ForgotPasswordForm'; 
-import StudentLogin from '@/pages/StudentLogin';
-import AdminLogin from '@/pages/AdminLogin';
-import UserManagementPage from '@/pages/admin/UserManagement';
-import RoleManagementPage from '@/pages/admin/RoleManagement';
-import CourseManagementPage from '@/pages/admin/CourseManagement';
-import CourseCreateWizardPage from '@/pages/admin/CourseCreateWizard';
+import { Routes, Route, Navigate } from "react-router-dom";
+import HomePage from "@/pages/HomePage";
+import RoleSelectionPage from "@/pages/RoleSelectionPage";
+import AdminDashboard from "@/pages/AdminDashboard";
+import TeacherDashboard from "@/pages/TeacherDashboard";
+import StudentDashboard from "@/pages/StudentDashboard";
+import TeacherLogin from "@/pages/TeacherLogin";
+import ProfilePage from "@/pages/ProfilePage";
+import ForgotPasswordForm from "@/components/ForgotPasswordForm";
+import StudentLogin from "@/pages/StudentLogin";
+import AdminLogin from "@/pages/AdminLogin";
+import UserManagementPage from "@/pages/admin/UserManagement";
+import RoleManagementPage from "@/pages/admin/RoleManagement"; // Import mới
+import CourseManagementPage from "@/pages/admin/CourseManagement";
+import CourseCreateWizardPage from "@/pages/admin/CourseCreateWizard";
 
-import TeacherSubject from '@/pages/teacher/TeacherSubject';
-import SubjectDetailPage from '@/pages/teacher/SubjectDetailPage';
-import SubjectFeaturePlaceholderPage from '@/pages/teacher/SubjectFeaturePlaceholderPage';
-import AttendancePage from '@/pages/teacher/AttendancePage';
-import ClassGroupStudentsPage from '@/pages/teacher/ClassGroupStudentsPage';
+import {
+  StudentSchedule,
+  StudentMaterials,
+  StudentGrades,
+  StudentAttendances,
+  StudentQuiz,
+  StudentAssignment,
+} from "@/components";
 
-// ✅ Bổ sung import trang Quản lý tài liệu môn học
-import SubjectResourcesPage from '@/pages/teacher/SubjectResourcesPage';
+import TeacherHome from "@/pages/teacher/TeacherHome";
+import ClassGroupsPage from "@/pages/teacher/ClassGroupsPage";
 
-// Public Course Pages
-import CoursesPage from '@/pages/CoursesPage';
-import CourseDetailPage from '@/pages/CourseDetailPage';
-import UpcomingCoursesPage from '@/pages/UpcomingCoursesPage';
-import PaymentResultPage from '@/pages/PaymentResultPage';
-import SubjectStudentsPage from '@/pages/teacher/SubjectStudentsPage';
-import SubjectTestsPage from '@/pages/teacher/SubjectTestsPage';
-import SubjectQuestionBankPage from '@/pages/teacher/SubjectQuestionBankPage';
+import TeacherCoursesPage from "@/pages/teacher/TeacherCoursesPage";
+import CourseDetailPage from "@/pages/teacher/CourseDetailPage";
+
+import ClassGroupStudentsPage from "@/pages/teacher/ClassGroupStudentsPage";
 
 export default function AppRoutes() {
   return (
@@ -47,7 +46,7 @@ export default function AppRoutes() {
       <Route path="/login/admin" element={<AdminLogin />} />
       <Route path="/login/teacher" element={<TeacherLogin />} />
       <Route path="/login/student" element={<StudentLogin />} />
-      
+
       {/* Thêm Route này ở đây để nó không bị rơi vào cụm /teacher/* phía dưới */}
       <Route
         path="/teacher/forgot-password"
@@ -61,62 +60,52 @@ export default function AppRoutes() {
       />
       {/* 3. Trang Profile cá nhân */}
       <Route path="/profile" element={<ProfilePage />} />
-  
+
       {/* 4. Các cụm Dashboard dành cho từng vai trò */}
       {/* Dashboard Admin */}
       <Route path="/admin/*" element={<AdminDashboard />} />
       <Route path="/admin/users" element={<UserManagementPage />} />
       <Route path="/admin/roles" element={<RoleManagementPage />} />
       <Route path="/admin/courses" element={<CourseManagementPage />} />
-      <Route path="/admin/courses/create" element={<CourseCreateWizardPage />} />
-      <Route path="/admin/courses/:id/edit" element={<CourseCreateWizardPage />} />
+      <Route
+        path="/admin/courses/create"
+        element={<CourseCreateWizardPage />}
+      />
+      <Route
+        path="/admin/courses/:id/edit"
+        element={<CourseCreateWizardPage />}
+      />
 
-      {/* Dashboard Teacher */}
-      <Route path="/teacher" element={<TeacherDashboard />} />
-      <Route path="/teacher/subjects" element={<TeacherSubject />} />
-      <Route path="/teacher/subjects/:subjectId" element={<SubjectDetailPage />} />
-      
-      {/* ✅ Thay thế Placeholder bằng Component Quản lý tài liệu thật (đã đổi path thành resources cho chuẩn) */}
-      <Route
-        path="/teacher/subjects/:subjectId/resources"
-        element={<SubjectResourcesPage />}
-      />
-      
-      <Route
-        path="/teacher/subjects/:subjectId/attendance"
-        element={<AttendancePage />}
-      />
-      <Route
-        path="/teacher/subjects/:subjectId/students"
-        element={<SubjectStudentsPage />}
-      />
-      <Route
-        path="/teacher/subjects/:subjectId/exams"
-        element={<SubjectTestsPage />}
-      />
-      <Route
-        path="/teacher/subjects/:subjectId/question-bank"
-        element={<SubjectQuestionBankPage />}
-      />
-      <Route
-        path="/teacher/subjects/:subjectId/grades"
-        element={<SubjectFeaturePlaceholderPage title="Quản lý điểm theo môn" />}
-      />
-      <Route
-        path="/teacher/subjects/:subjectId/groups"
-        element={<SubjectFeaturePlaceholderPage title="Nhóm lớp học phần" />}
-      />
-      <Route
-        path="/teacher/class-groups/:classGroupId/students"
-        element={<ClassGroupStudentsPage />}
-      />
+      {/* 4. Dashboard Teacher (nested routes) */}
+      <Route path="/teacher/*" element={<TeacherDashboard />}>
+        <Route index element={<TeacherHome />} />
+        <Route
+          path="subjects/:subjectId/groups"
+          element={<ClassGroupsPage />}
+        />
+
+        {/* ✅ Sinh viên trong nhóm lớp */}
+        <Route
+          path="class-groups/:classGroupId/students"
+          element={<ClassGroupStudentsPage />}
+        />
+      </Route>
 
       {/* 5. Dashboard Student */}
-      <Route path="/student/*" element={<StudentDashboard />} />
-      <Route path="/payment/vnpay-return" element={<PaymentResultPage />} />
+      <Route path="/student/*" element={<StudentDashboard />}>
+        <Route path="schedule" element={<StudentSchedule />} />
+        <Route path="materials" element={<StudentMaterials />} />
+        <Route path="grades" element={<StudentGrades />} />
+        <Route path="attendances" element={<StudentAttendances />} />
+        <Route path="quiz/:testId" element={<StudentQuiz />} />
+        <Route path="assignment/:testId" element={<StudentAssignment />} />
+      </Route>
 
       {/* 6. Not found */}
       <Route path="*" element={<Navigate to="/" replace />} />
+
+      <Route path="/teacher/courses" element={<TeacherCoursesPage />} />
+      <Route path="/teacher/courses/:id" element={<CourseDetailPage />} />
     </Routes>
   );
 }

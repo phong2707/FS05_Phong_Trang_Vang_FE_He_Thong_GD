@@ -1,34 +1,32 @@
-export type Course = {
-  id: string;
-  name: string;
-  description: string;
-  semester: string;
-  studentCount: number;
-};
+import axios from 'axios';
 
-export const getAssignedCourses = async (): Promise<Course[]> => {
-  // MOCK DATA – thay bằng API thật sau
-  return Promise.resolve([
-    {
-      id: 'course-001',
-      name: 'Lập trình Web',
-      description: 'HTML, CSS, JavaScript, React',
-      semester: 'HK1 2025',
-      studentCount: 45,
-    },
-    {
-      id: 'course-002',
-      name: 'Cơ sở dữ liệu',
-      description: 'SQL, Prisma, PostgreSQL',
-      semester: 'HK1 2025',
-      studentCount: 38,
-    },
-  ]);
-};
+const API_BASE_URL = 'http://localhost:8000/api/courses';
+// Nếu bạn không muốn tạo route mới, hãy đổi link gọi API cho khớp với route hiện tại:
+const CATEGORY_API_URL = 'http://localhost:8000/api/categories';
 
-export const getCourseDetail = async (id: string): Promise<Course> => {
-  const courses = await getAssignedCourses();
-  const course = courses.find(c => c.id === id);
-  if (!course) throw new Error('Course not found');
-  return course;
+export const courseApi = {
+  getAllCourses: async (params?: { title?: string; level?: string; price?: string; category?: string }) => {
+    const response = await axios.get(API_BASE_URL, { params });
+    return response.data;
+  },
+
+  getUpcomingCourses: async () => {
+    const response = await axios.get(`${API_BASE_URL}/upcoming`);
+    return response.data;
+  },
+
+  getCourseDetail: async (id: string) => {
+    const response = await axios.get(`${API_BASE_URL}/${id}`);
+    return response.data;
+  },
+
+  getCategories: async () => {
+    try {
+      const response = await axios.get(CATEGORY_API_URL);
+      return response.data;
+    } catch (error) {
+      console.error("Lỗi lấy danh mục:", error);
+      return [];
+    }
+  }
 };

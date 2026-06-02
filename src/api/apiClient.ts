@@ -28,8 +28,13 @@ apiClient.interceptors.response.use(
     // Chỉ redirect nếu thực sự bị 401 và không phải đang ở trang login
     if (error.response && error.response.status === 401) {
       const isLoginPage = window.location.pathname.includes('/login');
-      
-      if (!isLoginPage) {
+      const isGuestEnrollmentCall =
+        typeof error.config?.url === 'string' &&
+        error.config.url.includes('/v1/enrollments') &&
+        error.config.method?.toLowerCase() === 'post';
+
+      // Không redirect cho luồng guest enroll
+      if (!isLoginPage && !isGuestEnrollmentCall) {
         console.error("Phiên đăng nhập hết hạn!");
         localStorage.removeItem('token');
         localStorage.removeItem('user');

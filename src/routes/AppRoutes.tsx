@@ -38,7 +38,10 @@ export default function AppRoutes() {
       {/* 1. Các trang công khai */}
       <Route path="/" element={<HomePage />} />
       <Route path="/roles" element={<RoleSelectionPage />} />
-
+      <Route path="/courses" element={<CoursesPage />} />
+      <Route path="/courses/:id" element={<CourseDetailPage />} />
+      <Route path="/upcoming-courses" element={<UpcomingCoursesPage />} />
+      
       {/* 2. Luồng Đăng nhập & Quên mật khẩu (Phải đặt TRƯỚC các cụm /*) */}
       <Route path="/login/admin" element={<AdminLogin />} />
       <Route path="/login/teacher" element={<TeacherLogin />} />
@@ -59,7 +62,7 @@ export default function AppRoutes() {
       <Route path="/profile" element={<ProfilePage />} />
 
       {/* 4. Các cụm Dashboard dành cho từng vai trò */}
-      {/* Dấu /* cho phép các trang con bên trong Dashboard hoạt động */}
+      {/* Dashboard Admin */}
       <Route path="/admin/*" element={<AdminDashboard />} />
       <Route path="/admin/users" element={<UserManagementPage />} />
       <Route path="/admin/roles" element={<RoleManagementPage />} />

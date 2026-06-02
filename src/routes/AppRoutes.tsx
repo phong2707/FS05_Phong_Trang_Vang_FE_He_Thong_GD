@@ -1,13 +1,10 @@
 // frontend/src/routes/AppRoutes.tsx
 import { Routes, Route, Navigate } from "react-router-dom";
-
 import HomePage from "@/pages/HomePage";
 import RoleSelectionPage from "@/pages/RoleSelectionPage";
-
 import AdminDashboard from "@/pages/AdminDashboard";
 import TeacherDashboard from "@/pages/TeacherDashboard";
 import StudentDashboard from "@/pages/StudentDashboard";
-
 import TeacherLogin from "@/pages/TeacherLogin";
 import StudentLogin from "@/pages/StudentLogin";
 import AdminLogin from "@/pages/AdminLogin";
@@ -20,14 +17,26 @@ import TeacherSubject from "@/pages/teacher/TeacherSubject";
 import SubjectDetailPage from "@/pages/teacher/SubjectDetailPage";
 import SubjectFeaturePlaceholderPage from "@/pages/teacher/SubjectFeaturePlaceholderPage";
 import AttendancePage from "@/pages/teacher/AttendancePage";
-import ClassGroupStudentsPage from "@/pages/teacher/ClassGroupStudentsPage";
 
+import {
+  StudentSchedule,
+  StudentMaterials,
+  StudentGrades,
+  StudentAttendances,
+  StudentQuiz,
+  StudentAssignment,
+} from "@/components";
+
+// import TeacherHome from "@/pages/teacher/TeacherHome";
+// import ClassGroupsPage from "@/pages/teacher/ClassGroupsPage";
+import TeacherCoursesPage from "@/pages/teacher/TeacherCoursesPage";
 // ✅ Bổ sung import trang Quản lý tài liệu môn học
 import SubjectResourcesPage from "@/pages/teacher/SubjectResourcesPage";
 
 // Public Course Pages
 import CoursesPage from "@/pages/CoursesPage";
 import CourseDetailPage from "@/pages/CourseDetailPage";
+import ClassGroupStudentsPage from "@/pages/teacher/ClassGroupStudentsPage";
 import UpcomingCoursesPage from "@/pages/UpcomingCoursesPage";
 import SubjectStudentsPage from "@/pages/teacher/SubjectStudentsPage";
 import SubjectTestsPage from "@/pages/teacher/SubjectTestsPage";
@@ -53,7 +62,7 @@ export default function AppRoutes() {
       <Route path="/login/teacher" element={<TeacherLogin />} />
       <Route path="/login/student" element={<StudentLogin />} />
 
-      {/* Forgot password for teacher */}
+      {/* Thêm Route này ở đây để nó không bị rơi vào cụm /teacher/* phía dưới */}
       <Route
         path="/teacher/forgot-password"
         element={
@@ -65,7 +74,7 @@ export default function AppRoutes() {
         }
       />
 
-      {/* 3. Profile */}
+      {/* 3. Trang Profile cá nhân */}
       <Route path="/profile" element={<ProfilePage />} />
 
       {/* 4. Các cụm Dashboard dành cho từng vai trò */}
@@ -84,6 +93,20 @@ export default function AppRoutes() {
       />
 
       {/* Dashboard Teacher */}
+      {/* 4. Dashboard Teacher (nested routes) */}
+      {/* <Route path="/teacher/*" element={<TeacherDashboard />}>
+        <Route index element={<TeacherHome />} />
+        <Route
+          path="subjects/:subjectId/groups"
+          element={<ClassGroupsPage />}
+        /> */}
+        {/* ✅ Sinh viên trong nhóm lớp */}
+        {/* <Route
+          path="class-groups/:classGroupId/students"
+          element={<ClassGroupStudentsPage />}
+        /> */}
+      {/* </Route> */}
+
       <Route path="/teacher" element={<TeacherDashboard />} />
       <Route path="/teacher/subjects" element={<TeacherSubject />} />
       <Route
@@ -105,6 +128,7 @@ export default function AppRoutes() {
         path="/teacher/subjects/:subjectId/students"
         element={<SubjectStudentsPage />}
       />
+
       <Route
         path="/teacher/subjects/:subjectId/exams"
         element={<SubjectTestsPage />}
@@ -135,16 +159,27 @@ export default function AppRoutes() {
         path="/teacher/class-groups/:classGroupId/students"
         element={<ClassGroupStudentsPage />}
       />
-      <Route 
-        path="/teacher/questions/:id" 
-        element={<QuestionDetailPage />} 
+      <Route path="/teacher/questions/:id" element={<QuestionDetailPage />} />
+      <Route
+        path="class-groups/:classGroupId/students"
+        element={<ClassGroupStudentsPage />}
       />
 
-      {/* 6. Student Dashboard */}
-      <Route path="/student/*" element={<StudentDashboard />} />
+      {/* 5. Dashboard Student */}
+      <Route path="/student/*" element={<StudentDashboard />}>
+        <Route path="schedule" element={<StudentSchedule />} />
+        <Route path="materials" element={<StudentMaterials />} />
+        <Route path="grades" element={<StudentGrades />} />
+        <Route path="attendances" element={<StudentAttendances />} />
+        <Route path="quiz/:testId" element={<StudentQuiz />} />
+        <Route path="assignment/:testId" element={<StudentAssignment />} />
+      </Route>
 
       {/* 6. Not found */}
       <Route path="*" element={<Navigate to="/" replace />} />
+
+      <Route path="/teacher/courses" element={<TeacherCoursesPage />} />
+      <Route path="/teacher/courses/:id" element={<CourseDetailPage />} />
     </Routes>
   );
 }

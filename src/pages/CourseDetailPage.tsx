@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Calendar, Clock, Users, BookOpen, ChevronDown, Globe, Loader2, X } from 'lucide-react';
 import { Header } from '@/components/Header';
@@ -21,6 +21,8 @@ export default function CourseDetailPage() {
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('VNPAY');
   const [enrolling, setEnrolling] = useState(false);
   const [enrollError, setEnrollError] = useState('');
+  const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
   const [guestFirstName, setGuestFirstName] = useState('');
   const [guestLastName, setGuestLastName] = useState('');
   const [guestEmail, setGuestEmail] = useState('');
@@ -96,8 +98,9 @@ export default function CourseDetailPage() {
         return;
       }
 
-      alert('Đăng ký khóa học thành công! Đơn của bạn đang chờ duyệt.');
+      setSuccessMessage(res.message || 'Đăng ký khóa học thành công! Đơn của bạn đang chờ duyệt.');
       setIsEnrollModalOpen(false);
+      setIsSuccessModalOpen(true);
     } catch (err: any) {
       setEnrollError(err?.response?.data?.error || 'Không thể đăng ký khóa học. Vui lòng thử lại.');
     } finally {
@@ -363,6 +366,29 @@ export default function CourseDetailPage() {
         </div>
       )}
 
+      {isSuccessModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="w-full max-w-md rounded-2xl bg-white shadow-2xl border border-slate-200">
+            <div className="px-6 py-5 border-b border-slate-200">
+              <h3 className="text-xl font-bold text-slate-900">Giao dịch thành công</h3>
+            </div>
+            <div className="px-6 py-5 space-y-4">
+              <p className="text-slate-700">{successMessage}</p>
+              <div className="rounded-2xl bg-emerald-50 border border-emerald-100 px-4 py-3 text-emerald-700">
+                <p className="text-sm">Phương thức thanh toán: {paymentMethod === 'MANUAL' ? 'Chuyển khoản thủ công' : 'VNPay / Đã xác thực'}</p>
+              </div>
+            </div>
+            <div className="px-6 py-4 border-t border-slate-200 text-right">
+              <button
+                onClick={() => setIsSuccessModalOpen(false)}
+                className="rounded-xl bg-[#0f766e] px-4 py-2 text-white hover:bg-[#0d6560] transition"
+              >
+                Đóng
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       <Footer />
     </div>
   );

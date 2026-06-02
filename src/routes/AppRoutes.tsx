@@ -28,6 +28,7 @@ import SubjectResourcesPage from '@/pages/teacher/SubjectResourcesPage';
 import CoursesPage from '@/pages/CoursesPage';
 import CourseDetailPage from '@/pages/CourseDetailPage';
 import UpcomingCoursesPage from '@/pages/UpcomingCoursesPage';
+import PaymentResultPage from '@/pages/PaymentResultPage';
 import SubjectStudentsPage from '@/pages/teacher/SubjectStudentsPage';
 import SubjectTestsPage from '@/pages/teacher/SubjectTestsPage';
 import SubjectQuestionBankPage from '@/pages/teacher/SubjectQuestionBankPage';
@@ -112,6 +113,7 @@ export default function AppRoutes() {
 
       {/* 5. Dashboard Student */}
       <Route path="/student/*" element={<StudentDashboard />} />
+      <Route path="/payment/vnpay-return" element={<PaymentResultPage />} />
 
       {/* 6. Not found */}
       <Route path="*" element={<Navigate to="/" replace />} />

@@ -10,8 +10,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@ckeditor/ckeditor5-build-classic": "^44.3.0",
+    "@ckeditor/ckeditor5-react": "^11.1.2",
     "@react-oauth/google": "^0.13.5",
     "axios": "^1.15.2",
+    "dompurify": "^3.4.7",
     "lucide-react": "^1.11.0",
     "pnpm": "^10.33.2",
     "react": "^19.2.5",
@@ -24,6 +27,7 @@
   "devDependencies": {
     "@eslint/js": "^9.39.4",
     "@tailwindcss/vite": "^4.2.4",
+    "@types/dompurify": "^3.2.0",
     "@types/node": "^24.12.2",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",

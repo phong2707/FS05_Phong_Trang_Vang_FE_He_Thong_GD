@@ -54,7 +54,6 @@ export default function TestCreateModal({
   const [title, setTitle] = useState("");
   const [duration, setDuration] = useState(30);
   const [maxAttempts, setMaxAttempts] = useState(1);
-  
 
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
@@ -177,6 +176,10 @@ export default function TestCreateModal({
       if (mode === "AUTO" && rules.length === 0) {
         return alert("Thêm ít nhất 1 rule");
       }
+    }
+
+    if (testType === "ESSAY" && selected.length === 0) {
+      return alert("Chọn câu tự luận");
     }
     const ruleObject =
       mode === "AUTO"
@@ -365,6 +368,28 @@ export default function TestCreateModal({
         {/* STEP 3 */}
         {step === 3 && (
           <>
+            {testType === "ESSAY" && (
+              <>
+                <p className="text-sm text-gray-500">
+                  Đã chọn: {selected.length} câu
+                </p>
+
+                <div className="max-h-64 overflow-y-auto">
+                  {filteredQ.map((q) => (
+                    <div key={q.id}>
+                      <input
+                        type="radio"
+                        name="essay-question"
+                        checked={selected.includes(q.id)}
+                        onChange={() => setSelected([q.id])}
+                      />
+                      {q.content}
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
+
             {testType === "QUIZ" && (
               <>
                 <div className="flex gap-2">

@@ -3,17 +3,22 @@ import api from "./apiClient";
 export const studentLearningApi = {
   getSchedules: () => api.get("/student/schedules"),
 
-  getMySubjects: () => api.get("/student/subjects"),
+  getMySubjects() {
+    return api.get("/student/subjects");
+  },
+  getMyTests() {
+    return api.get("/v1/student/tests");
+  },
 
-  getMaterials: (subjectId: string) =>
-    api.get(`/student/subjects/${subjectId}/materials`),
+  getMaterials(subjectId: string) {
+    return api.get(`/subjects/${subjectId}/materials`);
+  },
 
   getMyGrades: () => api.get("/student/grades"),
 
   getMyAttendances: () => api.get("/student/attendances"),
 
-  startTest: (payload: { testId: string }) =>
-    api.post("/student/tests/start", payload),
+  startTest: (payload: { testId: string }) => api.post("/v1/tests/start", payload),
 
   submitTest: (payload: {
     testId: string;
@@ -23,11 +28,11 @@ export const studentLearningApi = {
       questionId: string;
       answerId?: string;
     }[];
-  }) => api.post("/student/tests/submit", payload),
+  }) => api.post("/v1/tests/submit", payload),
 
   submitAssignment: (payload: {
     testId: string;
     classGroupId: string; // Cần lấy từ đâu đó
     essayAnswer: string;
-  }) => api.post("/student/assignments/submit", payload),
+  }) => api.post("/assignments/submit", payload),
 };

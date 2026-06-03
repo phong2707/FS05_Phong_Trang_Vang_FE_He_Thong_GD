@@ -95,16 +95,20 @@ export interface QuestionBankItem {
   chapterId?: string;
 }
 
-const withMockFallback = async <T>(
+const callApi = async <T>(
   apiCall: () => Promise<T>,
-  fallback: () => T,
+  fallback?: () => T
 ): Promise<T> => {
   try {
     return await apiCall();
-  } catch {
-    return fallback();
+  } catch (err) {
+    console.error("API ERROR:", err);
+    if (fallback) return fallback();
+    throw err;
   }
 };
+
+
 
 // Mock tests theo đề bài
 const mockTests: TestItem[] = [
@@ -215,19 +219,19 @@ const mockSubmissions: SubmissionItem[] = [
 
 export const subjectTestsService = {
   async getTeacherSubjectTests(subjectId: string): Promise<TestItem[]> {
-    return withMockFallback(
-      async () => {
-        const response = await apiClient.get(
-          `/v1/subjects/${subjectId}/tests`,
-        );
-        return response?.data?.data || [];
-      },
-      () => mockTests,
-    );
-  },
+  return callApi(
+    async () => {
+      const response = await apiClient.get(
+        `/subjects/${subjectId}/tests`,
+      );
+      return response?.data?.data || [];
+    },
+    () => mockTests // ✅ dùng mock
+  );
+},
 
   async getSubjectChapters(subjectId: string): Promise<ChapterItem[]> {
-    return withMockFallback(
+    return callApi(
       async () => {
         const response = await apiClient.get(
           `/v1/subjects/${subjectId}/chapters`,
@@ -239,11 +243,7 @@ export const subjectTestsService = {
           id: c.id,
           title: c.title || c.name || "",
         }));
-      },
-      () => [
-        { id: "ch-1", title: "Chương 1: Tổng quan" },
-        { id: "ch-2", title: "Chương 2: React cơ bản" },
-      ],
+      },      
     );
   },
 
@@ -251,14 +251,14 @@ export const subjectTestsService = {
     subjectId: string,
     chapterId?: string,
   ): Promise<QuestionBankItem[]> {
-    return withMockFallback(
+    return callApi(
       async () => {
         const response = await apiClient.get(`/v1/questions`, {
           params: {
             subjectId,
             chapterId: chapterId || undefined,
             page: 1,
-            pageSize: 1000, // ✅ lấy hết câu hỏi
+            pageSize: 100, // ✅ lấy hết câu hỏi
           },
         });
 
@@ -273,7 +273,7 @@ export const subjectTestsService = {
           chapterId: q.chapterId,
         }));
       },
-      () => [],
+      
     );
   },
 
@@ -301,24 +301,25 @@ export const subjectTestsService = {
   },
 
   async getTestSubmissions(testId: string): Promise<SubmissionItem[]> {
-    return withMockFallback(
+    return callApi(
       async () => {
-        const response = await apiClient.get(`/v1/tests/${testId}/submissions`);
+        const response = await apiClient.get(`/tests/${testId}/submissions`);
         return response?.data?.data || [];
       },
-      () => mockSubmissions,
+      
     );
   },
 
   async gradeAssignmentSubmission(
     submissionId: string,
     payload: {
-      score: number;
+       score?: number;
       teacherFeedback?: string;
       feedbackFileUrl?: string;
+      useAI?: boolean;
     },
   ): Promise<SubmissionItem> {
-    return withMockFallback(
+    return callApi(
       async () => {
         const response = await apiClient.post(
           `/v1/assignments/${submissionId}/grade`,
@@ -335,4 +336,15 @@ export const subjectTestsService = {
       }),
     );
   },
+
+  async previewAIGrade(submissionId: string) {
+  const response = await apiClient.post(
+    `/v1/assignments/${submissionId}/grade`,
+    {
+      useAI: true,
+      preview: true,
+    }
+  );
+  return response?.data?.data;
+},
 };

@@ -1,11 +1,17 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useState } from "react";
 import { studentLearningApi } from "../api/studentLearning.api";
+import { useNavigate } from "react-router-dom";
 
 export const StudentMaterials: React.FC = () => {
   const [subjects, setSubjects] = useState<any[]>([]);
   const [selectedSubject, setSelectedSubject] = useState<string | null>(null);
   const [materials, setMaterials] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+  const [selectedClassGroupId, setSelectedClassGroupId] = useState<
+    string | null
+  >(null);
 
   // Tải danh sách môn học sinh viên đang tham gia
   useEffect(() => {
@@ -25,6 +31,9 @@ export const StudentMaterials: React.FC = () => {
   // Click vào 1 môn học để tải tài liệu tương ứng
   const handleSelectSubject = async (subjectId: string) => {
     setSelectedSubject(subjectId);
+
+    setSelectedClassGroupId("c990f176-38ea-419c-8341-8a2a64357191");
+
     setLoading(true);
     try {
       const res = await studentLearningApi.getMaterials(subjectId);
@@ -178,19 +187,27 @@ export const StudentMaterials: React.FC = () => {
                     {chapter.tests.map((t: any) => (
                       <li
                         key={t.id}
-                        className="text-sm flex flex-col sm:flex-row justify-between sm:items-center bg-purple-50 p-3 rounded-md border border-purple-100"
+                        className="cursor-pointer p-3 bg-purple-50 rounded-md border border-purple-100 hover:bg-purple-100 transition"
+                        onClick={() => {
+                          if (t.testType === "ESSAY") {
+                            navigate(`/student/assignment/${t.id}`, {
+                              state: {
+                                classGroupId: selectedClassGroupId,
+                              },
+                            });
+                          } else {
+                            navigate(`/student/quiz/${t.id}`, {
+                              state: {
+                                classGroupId: selectedClassGroupId,
+                              },
+                            });
+                          }
+                        }}
                       >
-                        <span className="font-medium text-purple-900">
-                          {t.title}
+                        <span className="font-medium">{t.title}</span>
+                        <span className="ml-2 text-xs bg-purple-600 text-white px-2 py-1 rounded">
+                          {t.testType}
                         </span>
-                        <div className="flex gap-2 mt-2 sm:mt-0">
-                          <span className="text-xs font-semibold bg-white text-purple-700 border border-purple-200 px-2 py-1 rounded shadow-sm">
-                            ⏱ {t.durationMinutes} phút
-                          </span>
-                          <span className="text-xs font-semibold bg-purple-600 text-white px-2 py-1 rounded shadow-sm">
-                            {t.testType}
-                          </span>
-                        </div>
                       </li>
                     ))}
                   </ul>

@@ -13,7 +13,7 @@ import {
   X,
 } from "lucide-react";
 import TeacherDashboardLayout from "@/components/teacher/TeacherDashboardLayout";
-import { 
+import {
   type SubmissionItem,
   type TestItem,
   subjectTestsService,
@@ -22,6 +22,22 @@ import {
 import TestCreateModal from "@/components/teacher/TestCreateModal";
 
 type FilterTab = "ALL" | "QUIZ" | "ESSAY";
+
+type AICriterion = {
+  name: string;
+  score: number;
+  max: number;
+  comment: string;
+};
+
+type AIPreview = {
+  aiScore: number;
+  aiFeedback: string;
+  criteria?: AICriterion[];
+  raw?: {
+    highlightedEssay?: string;
+  };
+};
 
 const buttonPrimary =
   "inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold text-white bg-teal-600 hover:bg-teal-700";
@@ -97,19 +113,19 @@ export default function SubjectTestsPage() {
   const [activeTest, setActiveTest] = useState<TestItem | null>(null);
   const [submissions, setSubmissions] = useState<SubmissionItem[]>([]);
   const [activeSubmission, setActiveSubmission] =
-    useState<SubmissionItem | null>(null); 
-  
+    useState<SubmissionItem | null>(null);
+
   const [saving, setSaving] = useState(false);
 
   const [gradeScore, setGradeScore] = useState(0);
+  const [aiPreview, setAiPreview] = useState<AIPreview  | null>(null);
+  const [loadingAI, setLoadingAI] = useState(false);
   const [teacherFeedback, setTeacherFeedback] = useState("");
 
   const filteredTests = useMemo(() => {
     if (filterTab === "ALL") return tests;
     return tests.filter((item) => item.testType === filterTab);
   }, [tests, filterTab]);
-
-  
 
   const loadTests = async () => {
     if (!subjectId) return;
@@ -142,10 +158,6 @@ export default function SubjectTestsPage() {
     };
   }, [subjectId]);
 
-  
-
-  
-
   const handleDelete = async (testId: string, testTitle: string) => {
     const ok = window.confirm(`Bạn có chắc muốn xóa bài "${testTitle}"?`);
     if (!ok) return;
@@ -156,8 +168,6 @@ export default function SubjectTestsPage() {
       setTests((prev) => prev.filter((t) => t.id !== testId));
     }
   };
-
- 
 
   const handleOpenSubmissions = async (test: TestItem) => {
     setActiveTest(test);
@@ -185,14 +195,8 @@ export default function SubjectTestsPage() {
     }
   };
 
-  
-
   const handleGrade = async () => {
     if (!activeSubmission) return;
-    if (gradeScore < 0 || gradeScore > 10) {
-      window.alert("Điểm phải trong khoảng 0-10");
-      return;
-    }
 
     setSaving(true);
     try {
@@ -201,21 +205,47 @@ export default function SubjectTestsPage() {
         teacherFeedback: teacherFeedback || undefined,
       });
 
-      setSubmissions((prev) =>
-        prev.map((item) =>
-          item.id === activeSubmission.id
-            ? {
-                ...item,
-                status: "GRADED",
-                score: gradeScore,
-                finalScoreStatus: "MANUAL_GRADED",
-              }
-            : item,
-        ),
+      setGradeOpen(false);
+      setActiveSubmission(null);
+      setAiPreview(null);
+
+      await loadTests();
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handlePreviewAI = async () => {
+    if (!activeSubmission) return;
+
+    setLoadingAI(true);
+    try {
+      const data = await subjectTestsService.previewAIGrade(
+        activeSubmission.id,
       );
+      setAiPreview(data);
+      if (data?.aiScore) {
+        setGradeScore(data.aiScore);
+      }
+    } finally {
+      setLoadingAI(false);
+    }
+  };
+
+  const handleAcceptAI = async () => {
+    if (!activeSubmission) return;
+
+    setSaving(true);
+    try {
+      await subjectTestsService.gradeAssignmentSubmission(activeSubmission.id, {
+        useAI: true,
+      });
 
       setGradeOpen(false);
       setActiveSubmission(null);
+      setAiPreview(null);
+
+      await loadTests();
     } finally {
       setSaving(false);
     }
@@ -510,6 +540,7 @@ export default function SubjectTestsPage() {
                                   setActiveSubmission(sub);
                                   setGradeScore(0);
                                   setTeacherFeedback("");
+                                  setAiPreview(null); // ✅ reset AI
                                   setGradeOpen(true);
                                 }}
                               >
@@ -537,7 +568,7 @@ export default function SubjectTestsPage() {
 
         {gradeOpen && activeSubmission && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-            <div className="w-full max-w-2xl rounded-xl bg-white p-5">
+            <div className="w-full max-w-3xl rounded-xl bg-white p-5 overflow-y-auto max-h-[90vh]">
               <div className="mb-4 flex items-center justify-between">
                 <h2 className="text-lg font-semibold text-gray-800">
                   Chấm bài ESSAY
@@ -550,7 +581,8 @@ export default function SubjectTestsPage() {
                 </button>
               </div>
 
-              <div className="space-y-3">
+              <div className="space-y-4">
+                {/* STUDENT */}
                 <div className={cardClass}>
                   <p className="text-sm font-semibold text-gray-700">
                     {activeSubmission.student.lastName}{" "}
@@ -562,20 +594,72 @@ export default function SubjectTestsPage() {
                   </p>
                 </div>
 
+                {/* ESSAY */}
                 <div className={cardClass}>
                   <p className="mb-2 text-sm font-semibold text-gray-700">
                     Nội dung bài làm
                   </p>
-                  <p className="whitespace-pre-wrap text-sm text-gray-700">
+                  <div className="whitespace-pre-wrap text-sm text-gray-700">
                     {activeSubmission.userAnswers?.[0]?.essayAnswer ||
                       "Không có nội dung"}
-                  </p>
+                  </div>
                 </div>
 
+                {/* BUTTON AI */}
+                <button
+                  className={buttonSecondary}
+                  onClick={handlePreviewAI}
+                  disabled={loadingAI}
+                >
+                  {loadingAI ? "Đang phân tích AI..." : "🤖 Phân tích AI"}
+                </button>
+
+                {/* AI RESULT */}
+                {aiPreview && (
+                  <>
+                    <div className={cardClass}>
+                      <p className="font-semibold mb-2">
+                        ✅ Điểm AI: {aiPreview.aiScore}
+                      </p>
+
+                      <div
+                        className="text-sm whitespace-pre-wrap"
+                        dangerouslySetInnerHTML={{
+                          __html: aiPreview.aiFeedback || "",
+                        }}
+                      />
+                    </div>
+
+                    {aiPreview.criteria && (
+                      <div className={cardClass}>
+                        <p className="font-semibold mb-2">Chi tiết chấm điểm</p>
+                        {aiPreview.criteria.map((c: AICriterion, i: number) => (
+                          <div key={i} className="mb-2 border-b pb-2">
+                            <p className="font-medium">
+                              {c.name}: {c.score}/{c.max}
+                            </p>
+                            <p className="text-sm text-gray-600">{c.comment}</p>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {aiPreview.raw?.highlightedEssay && (
+                      <div className={cardClass}>
+                        <p className="font-semibold mb-2">Highlight AI</p>
+                        <div
+                          dangerouslySetInnerHTML={{
+                            __html: aiPreview.raw.highlightedEssay,
+                          }}
+                        />
+                      </div>
+                    )}
+                  </>
+                )}
+
+                {/* SCORE */}
                 <div>
-                  <label className="mb-1 block text-sm font-semibold text-gray-700">
-                    Điểm (0-10)
-                  </label>
+                  <label className="text-sm font-semibold">Điểm (0-10)</label>
                   <input
                     type="number"
                     min={0}
@@ -586,8 +670,9 @@ export default function SubjectTestsPage() {
                   />
                 </div>
 
+                {/* FEEDBACK */}
                 <div>
-                  <label className="mb-1 block text-sm font-semibold text-gray-700">
+                  <label className="text-sm font-semibold">
                     Nhận xét giáo viên
                   </label>
                   <textarea
@@ -597,22 +682,32 @@ export default function SubjectTestsPage() {
                     onChange={(e) => setTeacherFeedback(e.target.value)}
                   />
                 </div>
-              </div>
 
-              <div className="mt-4 flex justify-end gap-2">
-                <button
-                  className={buttonSecondary}
-                  onClick={() => setGradeOpen(false)}
-                >
-                  Hủy
-                </button>
-                <button
-                  className={buttonPrimary}
-                  onClick={handleGrade}
-                  disabled={saving}
-                >
-                  {saving ? "Đang chấm..." : "Xác nhận chấm"}
-                </button>
+                {/* BUTTON ACTION */}
+                <div className="flex justify-end gap-2">
+                  {aiPreview && (
+                    <button
+                      className={buttonSecondary}
+                      onClick={handleAcceptAI}
+                      disabled={saving}
+                    >
+                      ✅ Dùng điểm AI
+                    </button>
+                  )}
+                  <button
+                    className={buttonSecondary}
+                    onClick={() => setGradeOpen(false)}
+                  >
+                    Hủy
+                  </button>
+                  <button
+                    className={buttonPrimary}
+                    onClick={handleGrade}
+                    disabled={saving}
+                  >
+                    {saving ? "Đang chấm..." : "Xác nhận chấm"}
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -622,11 +717,11 @@ export default function SubjectTestsPage() {
       <TestCreateModal
         subjectId={subjectId!}
         open={createOpen}
-        onClose={() => {setCreateOpen(false)}}
+        onClose={() => {
+          setCreateOpen(false);
+        }}
         onSuccess={loadTests}
       />
     </TeacherDashboardLayout>
   );
 }
-
-

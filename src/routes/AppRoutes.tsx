@@ -17,6 +17,13 @@ import TeacherSubject from "@/pages/teacher/TeacherSubject";
 import SubjectDetailPage from "@/pages/teacher/SubjectDetailPage";
 import SubjectFeaturePlaceholderPage from "@/pages/teacher/SubjectFeaturePlaceholderPage";
 import AttendancePage from "@/pages/teacher/AttendancePage";
+import EssaySubmissionPage from "@/pages/student/EssaySubmissionPage";
+import AssignmentList from "@/pages/student/AssignmentList";
+
+import DemoStudentPage from "@/pages/demo/DemoStudentPage";
+import DemoEssayPage from "@/pages/demo/DemoEssayPage";
+
+import StudentTestList from "@/components/student/StudentTestList";
 
 import {
   StudentSchedule,
@@ -24,12 +31,12 @@ import {
   StudentGrades,
   StudentAttendances,
   StudentQuiz,
-  StudentAssignment,
+  // StudentAssignment,
 } from "@/components";
 
 // import TeacherHome from "@/pages/teacher/TeacherHome";
 // import ClassGroupsPage from "@/pages/teacher/ClassGroupsPage";
-import TeacherCoursesPage from "@/pages/teacher/TeacherCoursesPage";
+// import TeacherCoursesPage from "@/pages/teacher/TeacherCoursesPage";
 // ✅ Bổ sung import trang Quản lý tài liệu môn học
 import SubjectResourcesPage from "@/pages/teacher/SubjectResourcesPage";
 
@@ -165,20 +172,26 @@ export default function AppRoutes() {
         element={<ClassGroupStudentsPage />}
       />
 
+      <Route path="/demo/student" element={<DemoStudentPage />} />
+<Route path="/demo/assignment" element={<DemoEssayPage />} />
+{/* <Route path="/student/assignment/:testId" element={<EssaySubmissionPage />} /> */}
       {/* 5. Dashboard Student */}
       <Route path="/student/*" element={<StudentDashboard />}>
+        <Route path="assignments" element={<AssignmentList />} />
+        <Route path="assignment/:testId" element={<EssaySubmissionPage />} />
         <Route path="schedule" element={<StudentSchedule />} />
         <Route path="materials" element={<StudentMaterials />} />
         <Route path="grades" element={<StudentGrades />} />
         <Route path="attendances" element={<StudentAttendances />} />
         <Route path="quiz/:testId" element={<StudentQuiz />} />
-        <Route path="assignment/:testId" element={<StudentAssignment />} />
+        <Route path="tests" element={<StudentTestList />} />
+        {/* <Route path="assignment/:testId" element={<StudentAssignment />} /> */}
       </Route>
 
       {/* 6. Not found */}
       <Route path="*" element={<Navigate to="/" replace />} />
 
-      <Route path="/teacher/courses" element={<TeacherCoursesPage />} />
+      {/* <Route path="/teacher/courses" element={<TeacherCoursesPage />} /> */}
       <Route path="/teacher/courses/:id" element={<CourseDetailPage />} />
     </Routes>
   );

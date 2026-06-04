@@ -40,20 +40,23 @@ export default function UserManagement() {
   const [stats, setStats] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [editId, setEditId] = useState<string | null>(null);
+  // 🟢 THÊM STATE TOTALPAGES VÀ ĐỔI PERPAGE THÀNH 7
+  const [totalPages, setTotalPages] = useState(1);
   const [filters, setFilters] = useState<UserQueryParams>({
-    page: 1, perPage: 10, search: '', role: '', status: ''
+    page: 1, perPage: 7, search: '', role: '', status: ''
   });
   const loadData = async () => {
       setLoading(true);
       try {
       const res = await adminUserService.getUsers(filters);
       setUsers(res.users);
+      setTotalPages(res.totalPages || 1);
       // Giả sử API trả về stats hoặc ta tính toán tạm thời
       setStats({
-        total: res.total,
-        active: res.users.filter((u: any) => u.status === 'ACTIVE').length,
-        pending: res.users.filter((u: any) => u.status === 'PENDING').length,
-        inactive: res.users.filter((u: any) => u.status === 'INACTIVE').length
+        total: res.total, // Tổng theo bộ lọc tìm kiếm
+          active: res.activeCount || 0,     // Lấy từ DB
+          pending: res.pendingCount || 0,   // Lấy từ DB
+          inactive: res.inactiveCount || 0  // Lấy từ DB
       });
       } finally { setLoading(false); }
   };
@@ -148,7 +151,7 @@ export default function UserManagement() {
       </div>
                   </td>
                   <td className="px-6 py-4">
-                    <span className={`px-2.5 py-1 rounded-full text-[10px] font-black border ${u.status === 'ACTIVE' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-amber-50 text-amber-600 border-amber-100'}`}>
+                    <span className={`px-2.5 py-1 rounded-full text-[10px] font-black border ${u.status === 'ACTIVE' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-red-50 text-red-600 border-amber-100'}`}>
                       {u.status}
                     </span>
                   </td>
@@ -159,6 +162,28 @@ export default function UserManagement() {
               ))}
             </tbody>
           </table>
+
+          <div className="flex items-center justify-between px-6 py-4 border-t border-slate-200 bg-slate-50">
+            <span className="text-sm text-slate-500 font-medium">
+              Đang hiển thị trang <strong className="text-slate-800">{filters.page}</strong> / <strong className="text-slate-800">{totalPages}</strong>
+            </span>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setFilters({ ...filters, page: Math.max(1, filters.page! - 1) })}
+                disabled={filters.page === 1 || loading}
+                className="px-4 py-2 text-sm font-bold text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              >
+                Trước
+              </button>
+              <button
+                onClick={() => setFilters({ ...filters, page: Math.min(totalPages, filters.page! + 1) })}
+                disabled={filters.page === totalPages || loading || totalPages === 0}
+                className="px-4 py-2 text-sm font-bold text-indigo-600 bg-indigo-50 border border-indigo-100 rounded-lg hover:bg-indigo-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              >
+                Sau
+              </button>
+            </div>
+          </div>
       </div>
       </main>
 
@@ -167,7 +192,6 @@ export default function UserManagement() {
   );
 }
 
-// --- MODAL SIMPLIFIED (ĐÃ FIX LỖI CRASH VÀ CHECKBOX) ---
 function EditUserModal({ userId, onClose }: { userId: string | null; onClose: () => void }) {
   const [activeTab, setActiveTab] = useState<'personal' | 'roles'>('personal');
   const [data, setData] = useState<any>(null);
@@ -184,7 +208,6 @@ function EditUserModal({ userId, onClose }: { userId: string | null; onClose: ()
           const res = await adminUserService.getUserDetails(userId);
           setData(res);
         } else {
-          // Khi Thêm mới: Gọi API lấy Roles
           const rolesRes = await adminUserService.getRoles();
           setData({ 
             targetUser: { firstName: '', lastName: '', email: '', status: 'ACTIVE', roleIds: [] }, 
@@ -222,7 +245,6 @@ function EditUserModal({ userId, onClose }: { userId: string | null; onClose: ()
     </div>
   );
 
-  // BẢO VỆ GIAO DIỆN: Nếu có lỗi API hoặc không có data, hiển thị thông báo thay vì crash app
   if (fetchError || !data) return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
       <div className="bg-white p-8 rounded-2xl shadow-xl text-center max-w-md w-full animate-in zoom-in-95">
@@ -274,9 +296,23 @@ function EditUserModal({ userId, onClose }: { userId: string | null; onClose: ()
                 onChange={e => setData({...data, targetUser: {...data.targetUser, email: e.target.value}})} 
               />
               
+              {/* 🟢 KHU VỰC THÊM TRƯỜNG STATUS Ở ĐÂY */}
+              <div>
+                <p className="text-sm font-bold text-slate-700 mb-2 mt-2">Trạng thái tài khoản:</p>
+                <select
+                  className="w-full p-3 border rounded-xl bg-white outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 font-medium text-slate-700"
+                  value={data.targetUser?.status || 'ACTIVE'}
+                  onChange={e => setData({...data, targetUser: {...data.targetUser, status: e.target.value}})}
+                >
+                  <option value="ACTIVE">Hoạt động (ACTIVE)</option>
+                  <option value="PENDING">Chờ duyệt (PENDING)</option>
+                  <option value="INACTIVE">Khóa (INACTIVE)</option>
+                </select>
+              </div>
+              
               {!userId && (
                 <div className="py-2">
-                  <p className="text-sm font-bold text-slate-700 mb-2">Chọn vai trò:</p>
+                  <p className="text-sm font-bold text-slate-700 mb-2 mt-2">Chọn vai trò:</p>
                   <div className="grid grid-cols-2 gap-3">
                     {data.roles?.map((r: any) => (
                       <label key={r.id} className="flex items-center gap-3 p-3 border rounded-xl cursor-pointer hover:bg-slate-50 transition-colors">

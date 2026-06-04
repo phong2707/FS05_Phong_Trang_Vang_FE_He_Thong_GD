@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import api from "@/api/apiClient";
 
 export type PaymentMethod = "VNPAY" | "MANUAL";
@@ -89,6 +90,11 @@ export const enrollmentService = {
   async enrollCourse(payload: EnrollCoursePayload): Promise<EnrollCourseResponse> {
     const res = await api.post("/v1/enrollments", payload);
     return res.data;
+  },
+
+  async getTransactionDetails(transactionId: string): Promise<any> {
+    const res = await api.get(`/v1/enrollments/transactions/${transactionId}`);
+    return res.data.transaction;
   },
 
   async getPendingEnrollments(params?: {

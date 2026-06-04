@@ -12,6 +12,7 @@ import UserManagementPage from "@/pages/admin/UserManagement";
 import RoleManagementPage from "@/pages/admin/RoleManagement";
 import CourseManagementPage from "@/pages/admin/CourseManagement";
 import CourseCreateWizardPage from "@/pages/admin/CourseCreateWizard";
+import RevenueDashboard from "@/pages/admin/RevenueDashboard";
 
 import TeacherSubject from "@/pages/teacher/TeacherSubject";
 import SubjectDetailPage from "@/pages/teacher/SubjectDetailPage";
@@ -53,6 +54,7 @@ import QuestionDetailPage from "@/pages/teacher/QuestionDetailPage";
 
 import ForgotPasswordForm from "@/components/ForgotPasswordForm";
 import ProfilePage from "@/pages/ProfilePage";
+import PaymentResultPage from "@/pages/PaymentResultPage";
 
 export default function AppRoutes() {
   return (
@@ -98,6 +100,7 @@ export default function AppRoutes() {
         path="/admin/courses/:id/edit"
         element={<CourseCreateWizardPage />}
       />
+      <Route path="/admin/revenue" element={<RevenueDashboard />} />
 
       {/* Dashboard Teacher */}
       {/* 4. Dashboard Teacher (nested routes) */}
@@ -187,6 +190,8 @@ export default function AppRoutes() {
         <Route path="tests" element={<StudentTestList />} />
         {/* <Route path="assignment/:testId" element={<StudentAssignment />} /> */}
       </Route>
+
+      <Route path="/payment-result" element={<PaymentResultPage />} />
 
       {/* 6. Not found */}
       <Route path="*" element={<Navigate to="/" replace />} />

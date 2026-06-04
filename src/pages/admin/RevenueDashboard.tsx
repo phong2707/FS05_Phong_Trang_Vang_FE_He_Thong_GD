@@ -13,11 +13,11 @@ import {
   Filter,
   Calendar,
 } from 'lucide-react';
-import axios from 'axios';
 import { adminMenuItems } from '@/constants/adminMenuConfig';
 import SidebarLayout from '@/layouts/SidebarLayout';
 import DashboardHeader from '@/components/DashboardHeader';
 import SidebarMenu from '@/components/SidebarMenu';
+import { revenueService } from '@/services/revenue.service';
 
 // Types
 interface OverviewStats {
@@ -130,21 +130,15 @@ export default function RevenueDashboard() {
   const [statusFilter, setStatusFilter] = useState<string>('');
   const [dateRange, setDateRange] = useState({ start: '', end: '' });
 
-  // API base URL
-  const API_BASE_URL = 'http://localhost:8000';
-
   /**
    * Load dashboard data
    */
   const loadDashboard = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(`${API_BASE_URL}/admin/revenue/dashboard`, {
-        withCredentials: true,
-      });
-
-      if (response.data.success) {
-        const { overview, recentTransactions, topCourses } = response.data.data;
+      const data = await revenueService.getDashboard();
+      if (data.success) {
+        const { overview, recentTransactions, topCourses } = data.data;
         setOverview(overview);
         setRecentTransactions(recentTransactions);
         setTopCourses(topCourses);
@@ -161,17 +155,12 @@ export default function RevenueDashboard() {
    */
   const loadTransactions = async () => {
     try {
-      const params = new URLSearchParams();
-      if (statusFilter) params.append('status', statusFilter);
-      params.append('limit', '10');
+      const params: any = { limit: 10 };
+      if (statusFilter) params.status = statusFilter;
 
-      const response = await axios.get(
-        `${API_BASE_URL}/admin/revenue/transactions?${params}`,
-        { withCredentials: true }
-      );
-
-      if (response.data.success) {
-        setRecentTransactions(response.data.data);
+      const data = await revenueService.getTransactions(params);
+      if (data.success) {
+        setRecentTransactions(data.data);
       }
     } catch (error) {
       console.error('Lỗi khi tải giao dịch:', error);
@@ -188,13 +177,9 @@ export default function RevenueDashboard() {
     }
 
     try {
-      const response = await axios.get(
-        `${API_BASE_URL}/admin/revenue/by-date-range?startDate=${dateRange.start}&endDate=${dateRange.end}`,
-        { withCredentials: true }
-      );
-
-      if (response.data.success) {
-        const { totalRevenue, transactionCount } = response.data.data;
+      const data = await revenueService.getRevenueByDateRange(dateRange.start, dateRange.end);
+      if (data.success) {
+        const { totalRevenue, transactionCount } = data.data;
         alert(
           `Doanh thu từ ${dateRange.start} đến ${dateRange.end}:\n` +
           `Tổng tiền: ${formatVND(totalRevenue)}\n` +
@@ -212,7 +197,13 @@ export default function RevenueDashboard() {
   }, []);
 
   useEffect(() => {
-    loadTransactions();
+    // Không gọi loadTransactions trong lần render đầu tiên vì loadDashboard đã gọi
+    if (statusFilter !== '') {
+      loadTransactions();
+    } else if (overview) {
+      // Nếu clear filter, load lại dashboard để lấy danh sách default
+      loadDashboard();
+    }
   }, [statusFilter]);
 
   if (loading) {

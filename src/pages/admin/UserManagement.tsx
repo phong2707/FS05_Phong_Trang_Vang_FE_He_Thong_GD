@@ -6,19 +6,14 @@
 import React, { useEffect, useState } from 'react';
 import {
   Search, Plus, Edit2, Loader2, Users, Shield,
-  UserCheck, AlertCircle, Filter, LayoutGrid, X, Check, Save, Info
+  UserCheck, AlertCircle, Filter, X, Check, Save, Info
 } from 'lucide-react';
 // FIX: Đảm bảo cú pháp import chuẩn, không dấu cách thừa
 import { adminUserService, type Role, type UserQueryParams } from '@/services/adminUserService';
+import { adminMenuItems } from '@/constants/adminMenuConfig';
 import SidebarLayout from '@/layouts/SidebarLayout';
 import DashboardHeader from '@/components/DashboardHeader';
 import SidebarMenu from '@/components/SidebarMenu';
-
-const adminMenuItems = [
-  { label: 'Dashboard', icon: LayoutGrid, href: '/admin' },
-  { label: 'Users', icon: Users, href: '/admin/users' },
-  { label: 'Roles & Permissions', icon: Shield, href: '/admin/roles' },
-];
 
 function StatCard({ title, value, icon: Icon, color }: any) {
   const colors: any = {

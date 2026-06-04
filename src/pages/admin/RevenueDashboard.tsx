@@ -10,11 +10,11 @@ import {
   Loader2,
   Check,
   X,
-  LayoutGrid,
   Filter,
   Calendar,
 } from 'lucide-react';
 import axios from 'axios';
+import { adminMenuItems } from '@/constants/adminMenuConfig';
 import SidebarLayout from '@/layouts/SidebarLayout';
 import DashboardHeader from '@/components/DashboardHeader';
 import SidebarMenu from '@/components/SidebarMenu';
@@ -57,12 +57,6 @@ interface TopCourse {
   transactionCount: number;
   createdAt: string;
 }
-
-// Side menu items
-const adminMenuItems = [
-  { label: 'Dashboard', icon: LayoutGrid, href: '/admin' },
-  { label: 'Revenue', icon: DollarSign, href: '/admin/revenue' },
-];
 
 // Stat Card Component
 function StatCard({ title, value, icon: Icon, color, suffix = '' }: any) {
@@ -137,7 +131,7 @@ export default function RevenueDashboard() {
   const [dateRange, setDateRange] = useState({ start: '', end: '' });
 
   // API base URL
-  const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+  const API_BASE_URL = 'http://localhost:8000';
 
   /**
    * Load dashboard data

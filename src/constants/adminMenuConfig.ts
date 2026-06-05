@@ -4,6 +4,7 @@ import {
   Shield,
   BookOpen,
   DollarSign,
+  UsersRound,
 } from 'lucide-react';
 
 export const adminMenuItems = [
@@ -26,6 +27,11 @@ export const adminMenuItems = [
     label: 'Courses', 
     icon: BookOpen, 
     href: '/admin/courses' 
+  },
+  { 
+    label: 'Class Groups', 
+    icon: UsersRound, 
+    href: '/admin/class-groups' 
   },
   { 
     label: 'Revenue & Transactions', 

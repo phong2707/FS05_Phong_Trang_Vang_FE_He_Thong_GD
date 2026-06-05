@@ -13,6 +13,7 @@ import RoleManagementPage from "@/pages/admin/RoleManagement";
 import CourseManagementPage from "@/pages/admin/CourseManagement";
 import CourseCreateWizardPage from "@/pages/admin/CourseCreateWizard";
 import RevenueDashboard from "@/pages/admin/RevenueDashboard";
+import ClassGroupManagement from "@/pages/admin/ClassGroupManagement";
 
 import TeacherSubject from "@/pages/teacher/TeacherSubject";
 import SubjectDetailPage from "@/pages/teacher/SubjectDetailPage";
@@ -102,6 +103,7 @@ export default function AppRoutes() {
         element={<CourseCreateWizardPage />}
       />
       <Route path="/admin/revenue" element={<RevenueDashboard />} />
+      <Route path="/admin/class-groups" element={<ClassGroupManagement />} />
 
       {/* Dashboard Teacher */}
       {/* 4. Dashboard Teacher (nested routes) */}

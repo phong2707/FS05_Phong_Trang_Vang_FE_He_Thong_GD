@@ -10,19 +10,40 @@ const apiClient = axios.create({
 
 apiClient.interceptors.request.use(
   (config) => {
-    // Luôn lấy token mới nhất từ localStorage trước mỗi request
-    const token = localStorage.getItem('token');
+    // Ưu tiên token riêng, fallback sang token trong user object (legacy)
+    let token = localStorage.getItem('token')?.trim();
 
-    if (token) {
-      // FIX: Đảm bảo format Bearer chuẩn chỉnh
-      config.headers.Authorization = `Bearer ${token.trim()}`;
+    if (!token) {
+      try {
+        const rawUser = localStorage.getItem('user');
+        if (rawUser) {
+          const parsedUser = JSON.parse(rawUser);
+          const maybeToken = parsedUser?.token || parsedUser?.accessToken;
+          if (typeof maybeToken === 'string' && maybeToken.trim()) {
+            token = maybeToken.trim();
+          }
+        }
+      } catch {
+        // ignore JSON parse errors
+      }
     }
 
-    // Debug tạm cho luồng chấm bài: kiểm tra request có gắn Authorization hay chưa
-    if (typeof config.url === 'string' && config.url.includes('/assignments/') && config.url.includes('/grade')) {
-      console.log('[API DEBUG][GRADE] URL:', config.url);
-      console.log('[API DEBUG][GRADE] Has token in localStorage:', !!token);
-      console.log('[API DEBUG][GRADE] Authorization header set:', !!config.headers?.Authorization);
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+
+    // Debug tạm cho các API đang lỗi auth
+    if (
+      typeof config.url === 'string' &&
+      (
+        config.url.includes('/assignments/') && config.url.includes('/grade') ||
+        config.url.includes('/v1/questions') ||
+        config.url.includes('/questions')
+      )
+    ) {
+      console.log('[API DEBUG] URL:', config.url);
+      console.log('[API DEBUG] Has token:', !!token);
+      console.log('[API DEBUG] Authorization header set:', !!config.headers?.Authorization);
     }
 
     return config;

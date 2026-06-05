@@ -1,22 +1,26 @@
 import api from "./apiClient";
 
 export const studentLearningApi = {
-  getSchedules: () => api.get("/student/schedules"),
+  getSchedules: () => api.get("/v1/student/schedules"),
 
   getMySubjects() {
-    return api.get("/student/subjects");
+    return api.get("/v1/student/subjects");
   },
   getMyTests() {
     return api.get("/v1/student/tests");
   },
 
   getMaterials(subjectId: string) {
-    return api.get(`/subjects/${subjectId}/materials`);
+    return api.get(`/v1/student/subjects/${subjectId}/materials`);
   },
 
-  getMyGrades: () => api.get("/student/grades"),
+  getMaterialDetail(materialId: string) {
+    return api.get(`/v1/student/materials/${materialId}`);
+  },
 
-  getMyAttendances: () => api.get("/student/attendances"),
+  getMyGrades: () => api.get("/v1/student/grades"),
+
+  getMyAttendances: () => api.get("/v1/student/attendances"),
 
   startTest: (payload: { testId: string }) => {
     console.log("API BODY startTest:", payload); // ✅ DEBUG

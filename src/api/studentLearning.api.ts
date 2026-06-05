@@ -18,7 +18,10 @@ export const studentLearningApi = {
 
   getMyAttendances: () => api.get("/student/attendances"),
 
-  startTest: (payload: { testId: string }) => api.post("/v1/tests/start", payload),
+  startTest: (payload: { testId: string }) => {
+    console.log("API BODY startTest:", payload); // ✅ DEBUG
+    return api.post("/v1/tests/start", payload);
+  },
 
   submitTest: (payload: {
     testId: string;

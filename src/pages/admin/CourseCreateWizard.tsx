@@ -1,17 +1,13 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ChevronRight, Loader2, Plus, X, ArrowLeft, Check, Grid3X3, BookOpen, Users } from 'lucide-react';
+import { ChevronRight, Loader2, Plus, X, ArrowLeft, Check, BookOpen, Users } from 'lucide-react';
 import { adminCourseService, type Teacher } from '@/services/admin/adminCourseService';
+import { adminMenuItems } from '@/constants/adminMenuConfig';
 import SidebarLayout from '@/layouts/SidebarLayout';
 import DashboardHeader from '@/components/DashboardHeader';
 import SidebarMenu from '@/components/SidebarMenu';
-
-const adminMenuItems = [
-  { label: 'Dashboard', icon: Grid3X3, href: '/admin' },
-  { label: 'Users', icon: Users, href: '/admin/users' },
-  { label: 'Courses', icon: BookOpen, href: '/admin/courses' },
-];
 
 export default function CourseCreateWizard() {
   const navigate = useNavigate();

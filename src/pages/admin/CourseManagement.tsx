@@ -1,18 +1,13 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from 'react';
-import { Search, Plus, Edit2, Loader2, BookOpen, Grid3X3, Users, TrendingUp, AlertCircle, Filter, DollarSign } from 'lucide-react';
+import { Search, Plus, Edit2, Loader2, BookOpen, TrendingUp, AlertCircle, Filter, DollarSign } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { adminCourseService, type Course } from '@/services/admin/adminCourseService';
+import { adminMenuItems } from '@/constants/adminMenuConfig';
 import SidebarLayout from '@/layouts/SidebarLayout';
 import DashboardHeader from '@/components/DashboardHeader';
 import SidebarMenu from '@/components/SidebarMenu';
-
-const adminMenuItems = [
-  { label: 'Dashboard', icon: Grid3X3, href: '/admin' },
-  { label: 'Users', icon: Users, href: '/admin/users' },
-  { label: 'Courses', icon: BookOpen, href: '/admin/courses' },
-];
 
 function StatCard({ title, value, icon: Icon, color }: any) {
   const colors: any = {

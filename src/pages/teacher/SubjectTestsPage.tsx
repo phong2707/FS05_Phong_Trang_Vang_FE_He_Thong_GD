@@ -97,6 +97,13 @@ function scopeBadge(scope: TestItem["scope"]) {
   return "text-xs font-semibold px-2.5 py-1 rounded-full border border-purple-200 text-purple-700 bg-purple-50";
 }
 
+function stripHtml(html?: string | null) {
+  if (!html) return "";
+
+  const doc = new DOMParser().parseFromString(html, "text/html");
+  return doc.body.textContent || "";
+}
+
 export default function SubjectTestsPage() {
   const navigate = useNavigate();
   const { subjectId } = useParams<{ subjectId: string }>();
@@ -118,7 +125,7 @@ export default function SubjectTestsPage() {
   const [saving, setSaving] = useState(false);
 
   const [gradeScore, setGradeScore] = useState(0);
-  const [aiPreview, setAiPreview] = useState<AIPreview  | null>(null);
+  const [aiPreview, setAiPreview] = useState<AIPreview | null>(null);
   const [loadingAI, setLoadingAI] = useState(false);
   const [teacherFeedback, setTeacherFeedback] = useState("");
 
@@ -202,14 +209,20 @@ export default function SubjectTestsPage() {
     try {
       await subjectTestsService.gradeAssignmentSubmission(activeSubmission.id, {
         score: gradeScore,
-        teacherFeedback: teacherFeedback || undefined,
+        feedback: teacherFeedback || undefined,
       });
+
+      // ✅ reload lại submissions
+      if (activeTest) {
+        const data = await subjectTestsService.getTestSubmissions(
+          activeTest.id,
+        );
+        setSubmissions(data);
+      }
 
       setGradeOpen(false);
       setActiveSubmission(null);
       setAiPreview(null);
-
-      await loadTests();
     } finally {
       setSaving(false);
     }
@@ -322,6 +335,12 @@ export default function SubjectTestsPage() {
                   <h3 className="text-lg font-semibold text-gray-800">
                     {test.title}
                   </h3>
+
+                  {test.chapterTitle && (
+                    <p className="text-xs text-gray-500 mt-1">
+                      📘 {test.chapterTitle}
+                    </p>
+                  )}
 
                   <div className="mt-3 grid grid-cols-1 gap-2 text-sm text-gray-600 md:grid-cols-2">
                     <div className="inline-flex items-center gap-2">
@@ -485,9 +504,7 @@ export default function SubjectTestsPage() {
                     <tr>
                       <th className="px-4 py-3 text-left">STT</th>
                       <th className="px-4 py-3 text-left">Sinh viên</th>
-                      {activeTest.testType === "QUIZ" && (
-                        <th className="px-4 py-3 text-left">Điểm</th>
-                      )}
+                      <th className="px-4 py-3 text-left">Điểm</th>
                       <th className="px-4 py-3 text-left">Trạng thái</th>
                       <th className="px-4 py-3 text-left">Thời gian nộp</th>
                       {activeTest.testType === "ESSAY" && (
@@ -512,11 +529,30 @@ export default function SubjectTestsPage() {
                             {sub.student.email}
                           </div>
                         </td>
-                        {activeTest.testType === "QUIZ" && (
-                          <td className="px-4 py-3">
-                            {sub.score !== null ? `${sub.score}/10` : "--"}
-                          </td>
-                        )}
+                        <td className="px-4 py-3">
+                          {sub.score !== null ? (
+                            <span
+                              className={`font-semibold ${
+                                sub.score >= 8
+                                  ? "text-green-600"
+                                  : sub.score >= 5
+                                    ? "text-yellow-600"
+                                    : "text-red-600"
+                              }`}
+                            >
+                              {sub.score}/10
+                              <span className="ml-1">
+                                {sub.score >= 8
+                                  ? "🔥"
+                                  : sub.score >= 5
+                                    ? "👌"
+                                    : "⚠️"}
+                              </span>
+                            </span>
+                          ) : (
+                            <span className="text-gray-400">--</span>
+                          )}
+                        </td>
                         <td className="px-4 py-3">
                           <span
                             className={
@@ -540,16 +576,24 @@ export default function SubjectTestsPage() {
                                   setActiveSubmission(sub);
                                   setGradeScore(0);
                                   setTeacherFeedback("");
-                                  setAiPreview(null); // ✅ reset AI
+                                  setAiPreview(null);
                                   setGradeOpen(true);
                                 }}
                               >
                                 Chấm bài
                               </button>
                             ) : (
-                              <span className="text-xs text-gray-500">
-                                Đã chấm
-                              </span>
+                              <button
+                                className={buttonSecondary}
+                                onClick={() => {
+                                  setActiveSubmission(sub);
+                                  setGradeScore(sub.score || 0);
+                                  setTeacherFeedback(sub.teacherFeedback || "");
+                                  setGradeOpen(true);
+                                }}
+                              >
+                                Xem lại
+                              </button>
                             )}
                           </td>
                         )}
@@ -600,8 +644,9 @@ export default function SubjectTestsPage() {
                     Nội dung bài làm
                   </p>
                   <div className="whitespace-pre-wrap text-sm text-gray-700">
-                    {activeSubmission.userAnswers?.[0]?.essayAnswer ||
-                      "Không có nội dung"}
+                    {stripHtml(
+                      activeSubmission.userAnswers?.[0]?.essayAnswer,
+                    ) || "Không có nội dung"}
                   </div>
                 </div>
 
@@ -679,9 +724,24 @@ export default function SubjectTestsPage() {
                     rows={4}
                     className={inputClass}
                     value={teacherFeedback}
+                    placeholder="Chưa có nhận xét"
                     onChange={(e) => setTeacherFeedback(e.target.value)}
                   />
+
+                  {activeSubmission?.teacherFeedback && (
+                    <div className="text-sm text-gray-600 mt-2">
+                      📝 {activeSubmission.teacherFeedback}
+                    </div>
+                  )}
                 </div>
+                {activeSubmission?.status === "GRADED" && (
+                  <span className="text-xs text-green-600">
+                    ({activeSubmission.score}/10)
+                  </span>
+                )}
+                {activeSubmission.finalScoreStatus === "AI_GRADED" && (
+                  <span className="text-xs text-blue-500">🤖 AI chấm</span>
+                )}
 
                 {/* BUTTON ACTION */}
                 <div className="flex justify-end gap-2">

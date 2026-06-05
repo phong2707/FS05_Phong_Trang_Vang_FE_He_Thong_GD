@@ -8,19 +8,11 @@ import {
   Activity,
   AlertCircle,
 } from 'lucide-react';
+import { adminMenuItems } from '@/constants/adminMenuConfig';
 import SidebarLayout from '@/layouts/SidebarLayout';
 import DashboardHeader from '@/components/DashboardHeader';
 import StatCard from '@/components/StatCard';
 import SidebarMenu from '@/components/SidebarMenu';
-
-const adminMenuItems = [
-  { label: 'Dashboard', icon: Activity, href: '/admin' },
-  { label: 'Users', icon: Users, href: '/admin/users' },
-  { label: 'Courses', icon: BookOpen, href: '/admin/courses' },
-  { label: 'Teachers', icon: UserCheck, href: '/admin/teachers' },
-  { label: 'Reports', icon: BarChart3, href: '/admin/reports' },
-  { label: 'Settings', icon: Settings, href: '/admin/settings' },
-];
 
 export default function AdminDashboard() {
   return (

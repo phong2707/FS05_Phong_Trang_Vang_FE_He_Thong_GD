@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { useEffect, useState } from 'react';
 import {
   Users,
   BookOpen,
@@ -7,14 +10,51 @@ import {
   TrendingUp,
   Activity,
   AlertCircle,
+  Loader2,
 } from 'lucide-react';
 import { adminMenuItems } from '@/constants/adminMenuConfig';
 import SidebarLayout from '@/layouts/SidebarLayout';
 import DashboardHeader from '@/components/DashboardHeader';
 import StatCard from '@/components/StatCard';
 import SidebarMenu from '@/components/SidebarMenu';
+import dashboardService from '@/services/dashboard.service';
+
+type RecentActivity = {
+  action: string;
+  user: string;
+  time: string | Date;
+  detail?: string;
+};
 
 export default function AdminDashboard() {
+  const [loading, setLoading] = useState(false);
+  const [stats, setStats] = useState<null | any>(null);
+  const [recentActivities, setRecentActivities] = useState<RecentActivity[]>([]);
+
+  useEffect(() => {
+    let mounted = true;
+    async function load() {
+      try {
+        setLoading(true);
+        const res = await dashboardService.getDashboardSummary();
+        if (!mounted) return;
+        setStats(res.stats || null);
+        setRecentActivities(res.recentActivities || []);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    }
+    load();
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  const formatVND = (value: number) =>
+    new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value || 0);
+
   return (
     <SidebarLayout
       sidebar={<SidebarMenu items={adminMenuItems} />}
@@ -24,34 +64,42 @@ export default function AdminDashboard() {
       <main className="flex-1 overflow-auto bg-stone-50 p-6">
         {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <StatCard
-            title="Total Users"
-            value="1,234"
-            icon={Users}
-            color="blue"
-            trend={{ value: 12, isPositive: true }}
-          />
-          <StatCard
-            title="Active Courses"
-            value="48"
-            icon={BookOpen}
-            color="green"
-            trend={{ value: 5, isPositive: true }}
-          />
-          <StatCard
-            title="Total Teachers"
-            value="156"
-            icon={UserCheck}
-            color="purple"
-            trend={{ value: 3, isPositive: false }}
-          />
-          <StatCard
-            title="Revenue"
-            value="$45,231"
-            icon={TrendingUp}
-            color="yellow"
-            trend={{ value: 8, isPositive: true }}
-          />
+          {loading && !stats ? (
+            <div className="col-span-1 md:col-span-2 lg:col-span-4 flex items-center justify-center py-8">
+              <Loader2 className="animate-spin text-gray-500" />
+            </div>
+          ) : (
+            <>
+              <StatCard
+                title="Total Users"
+                value={stats ? String(stats.totalUsers) : "-"}
+                icon={Users}
+                color="blue"
+                trend={{ value: 0, isPositive: true }}
+              />
+              <StatCard
+                title="Active Courses"
+                value={stats ? String(stats.activeCourses) : "-"}
+                icon={BookOpen}
+                color="green"
+                trend={{ value: 0, isPositive: true }}
+              />
+              <StatCard
+                title="Total Teachers"
+                value={stats ? String(stats.totalTeachers) : "-"}
+                icon={UserCheck}
+                color="purple"
+                trend={{ value: 0, isPositive: false }}
+              />
+              <StatCard
+                title="Revenue"
+                value={stats ? formatVND(stats.totalRevenue) : "-"}
+                icon={TrendingUp}
+                color="yellow"
+                trend={{ value: 0, isPositive: true }}
+              />
+            </>
+          )}
         </div>
 
         {/* Main Content Area */}
@@ -60,16 +108,26 @@ export default function AdminDashboard() {
           <div className="lg:col-span-2 bg-white rounded-lg shadow-md p-6">
             <h2 className="text-lg font-bold text-gray-900 mb-4">Recent Activities</h2>
             <div className="space-y-4">
-              {[1, 2, 3, 4, 5].map((item) => (
-                <div key={item} className="flex items-center space-x-4 pb-4 border-b border-gray-200 last:border-b-0">
-                  <div className="w-10 h-10 bg-gray-200 rounded-full"></div>
-                  <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-900">User Action {item}</p>
-                    <p className="text-xs text-gray-500">2 hours ago</p>
+              {recentActivities.length === 0 && !loading && (
+                <div className="text-sm text-gray-500">No recent activities</div>
+              )}
+
+              {recentActivities.map((act, idx) => {
+                const Icon = act.action === 'Transaction' ? Activity : Users;
+                const timeStr = new Date(act.time).toLocaleString();
+                return (
+                  <div key={idx} className="flex items-center space-x-4 pb-4 border-b border-gray-200 last:border-b-0">
+                    <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
+                      <Icon className="text-teal-600" size={18} />
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-sm font-medium text-gray-900">{act.action} — {act.user}</p>
+                      <p className="text-xs text-gray-500">{timeStr}</p>
+                    </div>
+                    <span className="px-3 py-1 bg-teal-100 text-teal-700 text-xs rounded-full font-medium">{act.detail ? act.detail : '—'}</span>
                   </div>
-                  <span className="px-3 py-1 bg-teal-100 text-teal-700 text-xs rounded-full font-medium">New</span>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
 

@@ -9,6 +9,9 @@ type StudentTest = {
   subjectName: string;
   chapterName: string;
   classGroupId: string;
+
+  startTime?: string; // ✅ thêm dòng này
+  endTime?: string;
 };
 
 export default function StudentTestList() {
@@ -29,7 +32,25 @@ export default function StudentTestList() {
   }, []);
 
   const handleStart = async (t: StudentTest) => {
+    const now = new Date();
+
+    // ✅ CHẶN CHƯA ĐẾN GIỜ
+    if (t.startTime && new Date(t.startTime) > now) {
+      alert("Chưa đến giờ làm bài");
+      return;
+    }
+
+    // ✅ optional: đã hết giờ
+    if (t.endTime && new Date(t.endTime) < now) {
+      alert("Bài kiểm tra đã hết hạn");
+      return;
+    }
+
     try {
+      console.log("START REQUEST:", {
+        testId: t.id,
+      });
+
       const res = await studentLearningApi.startTest({
         testId: t.id,
       });
@@ -47,7 +68,11 @@ export default function StudentTestList() {
           state: {
             classGroupId: t.classGroupId,
             sessionToken: data.sessionToken,
-            questions: data.questions,
+
+            questions:
+              Array.isArray(data.questions) && data.questions.length
+                ? data.questions
+                : undefined, // ✅ QUAN TRỌNG
           },
         });
       }
@@ -55,27 +80,35 @@ export default function StudentTestList() {
       console.error(err);
     }
   };
-
   return (
     <div>
       <h2 className="text-xl font-bold mb-4">Danh sách bài kiểm tra</h2>
+      {tests.map((t: StudentTest) => {
+        const now = new Date();
+        const isNotStart = !!t.startTime && new Date(t.startTime) > now;
 
-      {tests.map((t: StudentTest) => (
-        <div key={t.id} className="border p-4 rounded mb-3">
-          <h3 className="font-semibold">{t.title}</h3>
+        return (
+          <div key={t.id} className="border p-4 rounded mb-3">
+            <h3 className="font-semibold">{t.title}</h3>
 
-          <p>{t.subjectName}</p>
-          <p>{t.chapterName}</p>
-          <p>Loại: {t.testType}</p>
+            <p>{t.subjectName}</p>
+            <p>{t.chapterName}</p>
+            <p>Loại: {t.testType}</p>
 
-          <button
-            onClick={() => handleStart(t)}
-            className="mt-2 px-3 py-1 bg-indigo-600 text-white rounded"
-          >
-            Làm bài
-          </button>
-        </div>
-      ))}
+            <button
+              disabled={isNotStart}
+              onClick={() => handleStart(t)}
+              className={`mt-2 px-3 py-1 rounded ${
+                isNotStart
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-indigo-600 text-white hover:bg-indigo-700"
+              }`}
+            >
+              {isNotStart ? "Chưa mở" : "Làm bài"}
+            </button>
+          </div>
+        );
+      })}
     </div>
   );
 }

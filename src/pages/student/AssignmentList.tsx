@@ -2,98 +2,93 @@ import React, { useEffect, useState } from "react";
 import { studentLearningApi } from "@/api/studentLearning.api";
 import { useNavigate } from "react-router-dom";
 
-type Test = {
+type Material = {
   id: string;
   title: string;
-  testType: string;
-  classGroupId?: string;
+  fileType: string;
+  url: string;
 };
 
 type Chapter = {
   id: string;
   title: string;
-  tests: Test[];
+  taskmen: Material[];
 };
 
-// type Subject = {
-//   id: string;
-//   name: string;
-// };
 export default function AssignmentList() {
-  //   const [subjects, setSubjects] = useState<Subject[]>([]);
-  const [tests, setTests] = useState<Test[]>([]);
+  const [materials, setMaterials] = useState<Material[]>([]);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-  const fetchData = async () => {
-    setLoading(true);
+    const fetchData = async () => {
+      setLoading(true);
 
-    try {
-      // ✅ DÙNG SUBJECT ID thật của bạn
-      const subjectId = "c990f176-38ea-419c-8341-8a2a64357191";
+      try {
+        // 1. Gọi API lấy danh sách môn học mà sinh viên đang tham gia
+        const subjectsRes = await studentLearningApi.getMySubjects();
+        if (!subjectsRes.data.success || subjectsRes.data.data.length === 0) {
+          return; // Sinh viên chưa đăng ký môn học nào
+        }
 
-      const mtRes = await studentLearningApi.getMaterials(subjectId);
+        // 2. Lấy ID của môn học đầu tiên làm mặc định
+        const subjectId = subjectsRes.data.data[0].id;
 
-      if (mtRes.data.success) {
-        const materials = mtRes.data.data;
+        // 3. Truy vấn tài liệu dựa trên subjectId vừa lấy được
+        const mtRes = await studentLearningApi.getMaterials(subjectId);
 
-        console.log("MATERIALS:", materials);
+        if (mtRes.data.success) {
+          const data = mtRes.data.data;
 
-        const allTests: Test[] = [];
+          console.log("MATERIALS:", data);
 
-        materials.forEach((chapter: Chapter) => {
-          if (chapter.tests?.length > 0) {
-            allTests.push(...chapter.tests);
-          }
-        });
+          const allMaterials: Material[] = [];
 
-        console.log("ALL TESTS:", allTests);
+          data.forEach((chapter: Chapter) => {
+            if (chapter.taskmen?.length > 0) {
+              allMaterials.push(...chapter.taskmen);
+            }
+          });
 
-        setTests(allTests);
+          console.log("ALL MATERIALS:", allMaterials);
+
+          setMaterials(allMaterials);
+        }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
       }
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
 
-  fetchData();
-}, []);
-
+    fetchData();
+  }, []);
 
   if (loading) return <p className="p-6">Đang tải...</p>;
 
   return (
     <div className="p-6 space-y-4">
-      <h1 className="text-xl font-bold">📚 Assignment List</h1>
+      <h1 className="text-xl font-bold">📚 Danh sách Tài liệu Học tập</h1>
 
-      {tests.length === 0 && (
-        <p className="text-gray-500">Chưa có bài kiểm tra</p>
+      {materials.length === 0 && (
+        <p className="text-gray-500">Chưa có tài liệu nào</p>
       )}
 
-      {tests.map((t) => (
+      {materials.map((m) => (
         <div
-          key={t.id}
+          key={m.id}
           className="p-4 border rounded hover:bg-gray-50 cursor-pointer flex justify-between items-center"
           onClick={() => {
-            if (t.testType?.toUpperCase() === "ESSAY") {
-              navigate(`/student/assignment/${t.id}`, {
-                state: { classGroupId: t.classGroupId }, // hoặc set đúng sau
-              });
-            } else {
-              navigate(`/student/quiz/${t.id}`);
-            }
+            navigate(`/student/materials/${m.id}`);
           }}
         >
           <div>
-            <p className="font-semibold">{t.title}</p>
-            <p className="text-sm text-gray-500">Loại: {t.testType}</p>
+            <p className="font-semibold">{m.title}</p>
+            <p className="text-sm text-gray-500">Định dạng: {m.fileType}</p>
           </div>
 
           <span className="text-xs px-2 py-1 bg-teal-600 text-white rounded">
-            Làm bài
+            Xem chi tiết
           </span>
         </div>
       ))}

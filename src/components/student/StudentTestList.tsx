@@ -16,16 +16,24 @@ type StudentTest = {
 
 export default function StudentTestList() {
   const [tests, setTests] = useState<StudentTest[]>([]);
+  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchTests = async () => {
-      const res = await studentLearningApi.getMyTests();
+      try {
+        const res = await studentLearningApi.getMyTests();
 
-      console.log("API response:", res.data);
+        console.log("API response:", res.data);
 
-      if (res.data.success) {
-        setTests(res.data.data);
+        if (res.data.success) {
+          setTests(res.data.data);
+        }
+      } catch (err: any) {
+        console.error("Lỗi tải danh sách bài kiểm tra:", err);
+        setError(
+          err.response?.data?.message || "Không thể tải danh sách bài kiểm tra",
+        );
       }
     };
     fetchTests();
@@ -83,6 +91,14 @@ export default function StudentTestList() {
   return (
     <div>
       <h2 className="text-xl font-bold mb-4">Danh sách bài kiểm tra</h2>
+      {error && (
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+          {error}
+        </div>
+      )}
+      {tests.length === 0 && !error && (
+        <p className="text-gray-500">Không có bài kiểm tra nào.</p>
+      )}
       {tests.map((t: StudentTest) => {
         const now = new Date();
         const isNotStart = !!t.startTime && new Date(t.startTime) > now;

@@ -11,12 +11,20 @@ const apiClient = axios.create({
 apiClient.interceptors.request.use(
   (config) => {
     // Luôn lấy token mới nhất từ localStorage trước mỗi request
-    const token = localStorage.getItem('token'); 
-    
+    const token = localStorage.getItem('token');
+
     if (token) {
       // FIX: Đảm bảo format Bearer chuẩn chỉnh
-      config.headers.Authorization = `Bearer ${token.trim()}`; 
+      config.headers.Authorization = `Bearer ${token.trim()}`;
     }
+
+    // Debug tạm cho luồng chấm bài: kiểm tra request có gắn Authorization hay chưa
+    if (typeof config.url === 'string' && config.url.includes('/assignments/') && config.url.includes('/grade')) {
+      console.log('[API DEBUG][GRADE] URL:', config.url);
+      console.log('[API DEBUG][GRADE] Has token in localStorage:', !!token);
+      console.log('[API DEBUG][GRADE] Authorization header set:', !!config.headers?.Authorization);
+    }
+
     return config;
   },
   (error) => Promise.reject(error)

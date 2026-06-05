@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import NotificationBell from '@/components/NotificationBell';
 
 // ─── CSS Variables (match homepage) ────────────────────────────────────────
 // --teal-700: #0f766e   primary
@@ -122,7 +123,15 @@ const SignupDropdown: React.FC<DropdownMenuProps> = ({
   );
 };
 
-export const Header: React.FC = () => {
+interface HeaderCurrentUser {
+  id: string;
+}
+
+interface HeaderProps {
+  currentUser?: HeaderCurrentUser | null;
+}
+
+export const Header: React.FC<HeaderProps> = ({ currentUser }) => {
   const [isLoginDropdownOpen, setIsLoginDropdownOpen] = useState(false);
   const [isSignupDropdownOpen, setIsSignupDropdownOpen] = useState(false);
 
@@ -185,16 +194,22 @@ export const Header: React.FC = () => {
               vào Dashboard
             </Link>
 
-            <AuthDropdown
-              isOpen={isLoginDropdownOpen}
-              onMouseEnter={() => setIsLoginDropdownOpen(true)}
-              onMouseLeave={() => setIsLoginDropdownOpen(false)}
-            />
-            <SignupDropdown
-              isOpen={isSignupDropdownOpen}
-              onMouseEnter={() => setIsSignupDropdownOpen(true)}
-              onMouseLeave={() => setIsSignupDropdownOpen(false)}
-            />
+            {currentUser?.id ? (
+              <NotificationBell currentUser={currentUser} />
+            ) : (
+              <>
+                <AuthDropdown
+                  isOpen={isLoginDropdownOpen}
+                  onMouseEnter={() => setIsLoginDropdownOpen(true)}
+                  onMouseLeave={() => setIsLoginDropdownOpen(false)}
+                />
+                <SignupDropdown
+                  isOpen={isSignupDropdownOpen}
+                  onMouseEnter={() => setIsSignupDropdownOpen(true)}
+                  onMouseLeave={() => setIsSignupDropdownOpen(false)}
+                />
+              </>
+            )}
           </div>
         </div>
       </nav>

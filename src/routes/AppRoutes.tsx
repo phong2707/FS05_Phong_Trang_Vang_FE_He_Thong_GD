@@ -25,6 +25,7 @@ import DemoStudentPage from "@/pages/demo/DemoStudentPage";
 import DemoEssayPage from "@/pages/demo/DemoEssayPage";
 
 import StudentTestList from "@/components/student/StudentTestList";
+import SubjectGradesPage from "@/pages/teacher/SubjectGradesPage";
 
 import {
   StudentSchedule,
@@ -110,8 +111,8 @@ export default function AppRoutes() {
           path="subjects/:subjectId/groups"
           element={<ClassGroupsPage />}
         /> */}
-        {/* ✅ Sinh viên trong nhóm lớp */}
-        {/* <Route
+      {/* ✅ Sinh viên trong nhóm lớp */}
+      {/* <Route
           path="class-groups/:classGroupId/students"
           element={<ClassGroupStudentsPage />}
         /> */}
@@ -157,9 +158,7 @@ export default function AppRoutes() {
       />
       <Route
         path="/teacher/subjects/:subjectId/grades"
-        element={
-          <SubjectFeaturePlaceholderPage title="Quản lý điểm theo môn" />
-        }
+        element={<SubjectGradesPage />}
       />
       <Route
         path="/teacher/subjects/:subjectId/groups"
@@ -176,8 +175,8 @@ export default function AppRoutes() {
       />
 
       <Route path="/demo/student" element={<DemoStudentPage />} />
-<Route path="/demo/assignment" element={<DemoEssayPage />} />
-{/* <Route path="/student/assignment/:testId" element={<EssaySubmissionPage />} /> */}
+      <Route path="/demo/assignment" element={<DemoEssayPage />} />
+      {/* <Route path="/student/assignment/:testId" element={<EssaySubmissionPage />} /> */}
       {/* 5. Dashboard Student */}
       <Route path="/student/*" element={<StudentDashboard />}>
         <Route path="assignments" element={<AssignmentList />} />
